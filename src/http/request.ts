@@ -1,4 +1,4 @@
-import type { AnyObject, ObjectSchema } from "npm:yup";
+import type { AnyObject, ObjectSchema } from "npm:yup@1.4.0";
 
 import RequestValidator from "@amber/http/request-validator.ts";
 

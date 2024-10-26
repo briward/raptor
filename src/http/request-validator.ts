@@ -1,4 +1,4 @@
-import { ObjectSchema, type AnyObject } from 'npm:yup';
+import { ObjectSchema, type AnyObject } from 'npm:yup@1.4.0';
 
 import BadRequest from "@amber/error/bad-request.ts";
 
