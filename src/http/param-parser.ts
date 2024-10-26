@@ -12,7 +12,7 @@ export default class ParamParser {
   public parse(): Params {
     const segments : Array<string> = [];
 
-    const regexPattern = this.pattern.pathname.replace(/\/:([^\/]+)/g, (match, name) => {
+    const regexPattern = this.pattern.pathname.replace(/\/:([^\/]+)/g, (_match, name) => {
       segments.push(name);
 
       return '/([^/]+)';

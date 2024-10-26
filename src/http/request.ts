@@ -1,6 +1,6 @@
 import type { AnyObject, ObjectSchema } from "npm:yup@1.4.0";
 
-import RequestValidator from "@amber/http/request-validator.ts";
+import RequestValidator, { type ValidationResponse } from "@amber/http/request-validator.ts";
 
 export default class HttpRequest extends Request {
   private validator : RequestValidator;
@@ -11,7 +11,7 @@ export default class HttpRequest extends Request {
     this.validator = new RequestValidator();
   }
 
-  public async validate(schema: ObjectSchema<AnyObject>) {
+  public async validate(schema: ObjectSchema<AnyObject>) : ValidationResponse {
     const body = await this.json();
 
     return this.validator.validate(body, schema);

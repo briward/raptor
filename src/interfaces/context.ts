@@ -1,5 +1,5 @@
-import HttpRequest from "@amber/http/request.ts";
-import HttpResponse from "@amber/http/response.ts";
+import type HttpRequest from "@amber/http/request.ts";
+import type HttpResponse from "@amber/http/response.ts";
 
 export interface Params {
   [key: string]: string;

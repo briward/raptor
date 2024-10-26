@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 export default class HttpResponse extends Response {
   #status: number;
   #body: ReadableStream<Uint8Array>;
@@ -11,7 +12,7 @@ export default class HttpResponse extends Response {
     this.#headers = new Headers();
   }
 
-  override get status() {
+  override get status() : number {
     return this.#status;
   }
 
@@ -19,7 +20,7 @@ export default class HttpResponse extends Response {
     this.#status = value;
   }
 
-  override get body() {
+  override get body() : ReadableStream<Uint8Array> {
     return this.#body;
   }
 
@@ -27,7 +28,7 @@ export default class HttpResponse extends Response {
     this.#body = value;
   }
 
-  override get headers() {
+  override get headers() : Headers {
     return this.#headers;
   }
 
