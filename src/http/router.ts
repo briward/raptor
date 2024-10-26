@@ -1,7 +1,8 @@
 import NotFound from "@amber/error/not-found.ts";
-import { Route } from "@amber/interfaces/route.ts";
 import ParamParser from "@amber/http/param-parser.ts";
+
 import type { Context } from "../interfaces/context.ts";
+import type { Route } from "@amber/interfaces/route.ts";
 
 export default class Router {
   public routes : Route[];

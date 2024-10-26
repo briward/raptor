@@ -1,6 +1,6 @@
-import HttpRequest from "@amber/http/request.ts";
-import HttpResponse from "@amber/http/response.ts";
-import { Params } from "@amber/interfaces/context.ts";
+import type HttpRequest from "@amber/http/request.ts";
+import type HttpResponse from "@amber/http/response.ts";
+import type { Params } from "@amber/interfaces/context.ts";
 
 export default class Context implements Context {
   public request : HttpRequest;
