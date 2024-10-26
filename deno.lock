@@ -1,0 +1,29 @@
+{
+  "version": "4",
+  "specifiers": {
+    "npm:yup@*": "1.4.0"
+  },
+  "npm": {
+    "property-expr@2.0.6": {
+      "integrity": "sha512-SVtmxhRE/CGkn3eZY1T6pC8Nln6Fr/lu1mKSgRud0eC73whjGfoAogbn78LkD8aFL0zz3bAFerKSnOl7NlErBA=="
+    },
+    "tiny-case@1.0.3": {
+      "integrity": "sha512-Eet/eeMhkO6TX8mnUteS9zgPbUMQa4I6Kkp5ORiBD5476/m+PIRiumP5tmh5ioJpH7k51Kehawy2UDfsnxxY8Q=="
+    },
+    "toposort@2.0.2": {
+      "integrity": "sha512-0a5EOkAUp8D4moMi2W8ZF8jcga7BgZd91O/yabJCFY8az+XSzeGyTKs0Aoo897iV1Nj6guFq8orWDS96z91oGg=="
+    },
+    "type-fest@2.19.0": {
+      "integrity": "sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA=="
+    },
+    "yup@1.4.0": {
+      "integrity": "sha512-wPbgkJRCqIf+OHyiTBQoJiP5PFuAXaWiJK6AmYkzQAh5/c2K9hzSApBZG5wV9KoKSePF7sAxmNSvh/13YHkFDg==",
+      "dependencies": [
+        "property-expr",
+        "tiny-case",
+        "toposort",
+        "type-fest"
+      ]
+    }
+  }
+}
