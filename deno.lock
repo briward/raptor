@@ -1,9 +1,32 @@
 {
   "version": "4",
   "specifiers": {
-    "npm:yup@*": "1.4.0"
+    "jsr:@std/fs@1.0.5": "1.0.5",
+    "jsr:@std/path@^1.0.7": "1.0.7",
+    "npm:nodemailer@*": "6.9.15",
+    "npm:nodemailer@6.9.15": "6.9.15",
+    "npm:postgres@3.4.5": "3.4.5",
+    "npm:yup@*": "1.4.0",
+    "npm:yup@1.4.0": "1.4.0"
+  },
+  "jsr": {
+    "@std/fs@1.0.5": {
+      "integrity": "41806ad6823d0b5f275f9849a2640d87e4ef67c51ee1b8fb02426f55e02fd44e",
+      "dependencies": [
+        "jsr:@std/path"
+      ]
+    },
+    "@std/path@1.0.7": {
+      "integrity": "76a689e07f0e15dcc6002ec39d0866797e7156629212b28f27179b8a5c3b33a1"
+    }
   },
   "npm": {
+    "nodemailer@6.9.15": {
+      "integrity": "sha512-AHf04ySLC6CIfuRtRiEYtGEXgRfa6INgWGluDhnxTZhHSKvrBu7lc1VVchQ0d8nPc4cFaZoPq8vkyNoZr0TpGQ=="
+    },
+    "postgres@3.4.5": {
+      "integrity": "sha512-cDWgoah1Gez9rN3H4165peY9qfpEo+SA61oQv65O3cRUE1pOEoJWwddwcqKE8XZYjbblOJlYDlLV4h67HrEVDg=="
+    },
     "property-expr@2.0.6": {
       "integrity": "sha512-SVtmxhRE/CGkn3eZY1T6pC8Nln6Fr/lu1mKSgRud0eC73whjGfoAogbn78LkD8aFL0zz3bAFerKSnOl7NlErBA=="
     },

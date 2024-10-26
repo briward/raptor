@@ -1,4 +1,4 @@
-import nodemailer from "npm:nodemailer";
+import nodemailer from "npm:nodemailer@6.9.15";
 
 export default class Mailer {
   private client;

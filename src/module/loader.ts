@@ -1,4 +1,4 @@
-import { walkSync } from "jsr:@std/fs/walk";
+import { walkSync } from "jsr:@std/fs@1.0.5/walk";
 
 import type { Route } from "@amber/interfaces/route.ts";
 import type { ModuleConfig } from "@amber/interfaces/module.ts";

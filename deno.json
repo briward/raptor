@@ -6,7 +6,6 @@
     "dev": "deno run --env --allow-all --watch src/kernel.ts"
   },
   "imports": {
-    "@amber/": "./src/",
-    "@postgres": "https://deno.land/x/postgresjs@v3.4.4/mod.js"
+    "@amber/": "./src/"
   }
 }

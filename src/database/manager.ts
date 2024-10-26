@@ -1,4 +1,4 @@
-import postgres from "@postgres";
+import postgres from "npm:postgres@3.4.5";
 
 export default class Manager {
   public query : postgres.Sql;
