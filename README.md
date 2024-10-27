@@ -43,11 +43,13 @@ const router = new Router();
 
 router.addRoute({
   name: 'home';
-  pathname: new URLPattern('/');
+  pathname: new URLPattern('/pages/:id');
   method: 'GET';
   action: (context: Context) => {
+    const { id } = context.params;
+
     context.response.body = JSON.stringify({
-      hello: 'world'
+      id,
     }
   }
 });
