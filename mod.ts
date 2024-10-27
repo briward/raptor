@@ -12,7 +12,6 @@ import ServerError from "@amber/error/server-error.ts";
 export type { Route } from "@amber/interfaces/route.ts";
 export type { Error } from "@amber/interfaces/error.ts";
 export type { Context } from "@amber/interfaces/context.ts";
-export type { ModuleConfig } from "@amber/interfaces/module.ts";
 
 export {
   Kernel,
