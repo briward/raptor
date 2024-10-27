@@ -3,6 +3,7 @@
   "version": "0.1.5",
   "exports": "./mod.ts",
   "tasks": {
-    "dev": "deno run --env --allow-all --watch src/kernel.ts"
+    "dev": "deno run --env --allow-all --watch src/kernel.ts",
+    "test": "deno test --allow-all --parallel"
   }
 }
