@@ -1,6 +1,6 @@
 {
   "name": "@briward/amber",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "exports": "./mod.ts",
   "tasks": {
     "dev": "deno run --env --allow-all --watch src/kernel.ts",
