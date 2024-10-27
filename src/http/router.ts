@@ -11,7 +11,14 @@ export default class Router {
     this.routes = [];
   }
 
-  public addRoutes(routes: Route[]) {
+  public addRoute(route: Route) : void {
+    this.routes = [
+      ...this.routes,
+      route
+    ];
+  }
+
+  public addRoutes(routes: Route[]) : void {
     this.routes = [...this.routes, ...routes];
   }
 

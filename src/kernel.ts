@@ -1,6 +1,7 @@
 import Context from "./http/context.ts";
-import HttpResponse from "./http/response.ts";
 import HttpRequest from "./http/request.ts";
+import HttpResponse from "./http/response.ts";
+import TypeError from "./error/type-error.ts";
 
 export default class Kernel {
   private middleware : CallableFunction[];
@@ -19,13 +20,18 @@ export default class Kernel {
     Deno.serve({ port }, async (request: Request) => {
       const context = new Context(
         new HttpRequest(request),
-        new HttpResponse(''),
-        {}
+        new HttpResponse(null),
       );
 
-      try {  
+      try {
         for (let i = 0; i < this.middleware.length; i++) {
-          await this.dispatch(i, context);
+          await this.middleware[i](context);
+        }
+
+        if (!context.response.body) {
+          throw new TypeError(
+            'No response body was provided in context, are you missing a return?'
+          );
         }
       } catch (error) {
         context.response.body = JSON.stringify(error);
@@ -40,11 +46,5 @@ export default class Kernel {
         }
       );
     });
-  }
-
-  private async dispatch(i: number, context: Context) {
-    const middleware = this.middleware[i];
-
-    await middleware(context, this.dispatch.bind(null, i++));
   }
 };
