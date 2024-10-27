@@ -4,7 +4,7 @@ import HttpResponse from "./http/response.ts";
 import TypeError from "./error/type-error.ts";
 
 export default class Kernel {
-  private middleware : CallableFunction[];
+  private middleware: CallableFunction[];
 
   constructor() {
     this.middleware = [];
@@ -30,7 +30,7 @@ export default class Kernel {
 
         if (!context.response.body) {
           throw new TypeError(
-            'No response body was provided in context, are you missing a return?'
+            "No response body was provided in context, are you missing a return?",
           );
         }
       } catch (error) {
@@ -43,8 +43,8 @@ export default class Kernel {
         {
           status: context.response.status,
           headers: context.response.headers,
-        }
+        },
       );
     });
   }
-};
+}

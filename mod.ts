@@ -13,12 +13,4 @@ export type { Route } from "./src/interfaces/route.ts";
 export type { Error } from "./src/interfaces/error.ts";
 export type { Context } from "./src/interfaces/context.ts";
 
-export {
-  Kernel,
-  Router,
-  Request,
-  Response,
-  NotFound,
-  BadRequest,
-  ServerError,
-};
+export { BadRequest, Kernel, NotFound, Request, Response, Router, ServerError };

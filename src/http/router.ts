@@ -5,26 +5,26 @@ import type { Context } from "../interfaces/context.ts";
 import type { Route } from "../interfaces/route.ts";
 
 export default class Router {
-  public routes : Route[];
+  public routes: Route[];
 
   constructor() {
     this.routes = [];
   }
 
-  public addRoute(route: Route) : void {
+  public addRoute(route: Route): void {
     this.routes = [
       ...this.routes,
-      route
+      route,
     ];
   }
 
-  public addRoutes(routes: Route[]) : void {
+  public addRoutes(routes: Route[]): void {
     this.routes = [...this.routes, ...routes];
   }
 
   public async handle(context: Context) {
     const { request } = context;
-  
+
     const route = this.getRouteFromRequest(request);
 
     if (!route || request.method !== route.method) {
@@ -39,13 +39,15 @@ export default class Router {
     await route.action(context);
   }
 
-  private getRouteFromRequest(request: Request) : Route | null {
-    const route = this.routes.find(({ pathname }) => pathname.exec(request.url))
+  private getRouteFromRequest(request: Request): Route | null {
+    const route = this.routes.find(({ pathname }) =>
+      pathname.exec(request.url)
+    );
 
     if (!route) {
       return null;
     }
-  
+
     return route;
   }
-};
+}

@@ -1,8 +1,8 @@
 import type { Params } from "../interfaces/context.ts";
 
 export default class ParamParser {
-  public pattern : URLPattern;
-  public url : string;
+  public pattern: URLPattern;
+  public url: string;
 
   constructor(pattern: URLPattern, url: string) {
     this.pattern = pattern;
@@ -10,13 +10,16 @@ export default class ParamParser {
   }
 
   public parse(): Params {
-    const segments : Array<string> = [];
+    const segments: Array<string> = [];
 
-    const regexPattern = this.pattern.pathname.replace(/\/:([^\/]+)/g, (_match, name) => {
-      segments.push(name);
+    const regexPattern = this.pattern.pathname.replace(
+      /\/:([^\/]+)/g,
+      (_match, name) => {
+        segments.push(name);
 
-      return '/([^/]+)';
-    });
+        return "/([^/]+)";
+      },
+    );
 
     const regex = new RegExp(`^${regexPattern}$`);
 
@@ -26,7 +29,7 @@ export default class ParamParser {
 
     if (!match) return {};
 
-    const params : Params = {};
+    const params: Params = {};
 
     segments.forEach((name, index) => {
       const value = match[index + 1];
@@ -35,4 +38,4 @@ export default class ParamParser {
 
     return params;
   }
-};
+}

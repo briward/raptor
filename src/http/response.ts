@@ -12,7 +12,7 @@ export default class HttpResponse extends Response {
     this.#headers = new Headers();
   }
 
-  override get status() : number {
+  override get status(): number {
     return this.#status;
   }
 
@@ -20,7 +20,7 @@ export default class HttpResponse extends Response {
     this.#status = value;
   }
 
-  override get body() : ReadableStream<Uint8Array> | null {
+  override get body(): ReadableStream<Uint8Array> | null {
     return this.#body;
   }
 
@@ -28,11 +28,11 @@ export default class HttpResponse extends Response {
     this.#body = value;
   }
 
-  override get headers() : Headers {
+  override get headers(): Headers {
     return this.#headers;
   }
 
   override set headers(value: Headers) {
     this.#headers = value;
   }
-};
+}
