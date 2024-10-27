@@ -15,7 +15,7 @@ export default class Router {
     this.routes = [...this.routes, ...routes];
   }
 
-  public handle(context: Context) : void {
+  public async handle(context: Context) {
     const { request } = context;
   
     const route = this.getRouteFromRequest(request);
@@ -29,7 +29,7 @@ export default class Router {
 
     context.params = params;
 
-    route.action(context);
+    await route.action(context);
   }
 
   private getRouteFromRequest(request: Request) : Route | null {
