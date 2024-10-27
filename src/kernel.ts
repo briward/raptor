@@ -1,6 +1,6 @@
-import Context from "@amber/http/context.ts";
-import HttpResponse from "@amber/http/response.ts";
-import HttpRequest from "@amber/http/request.ts";
+import Context from "./http/context.ts";
+import HttpResponse from "./http/response.ts";
+import HttpRequest from "./http/request.ts";
 
 export default class Kernel {
   private middleware : CallableFunction[];
@@ -25,7 +25,7 @@ export default class Kernel {
 
       try {  
         for (let i = 0; i < this.middleware.length; i++) {
-          await this.middleware[i](context);
+          await this.dispatch(i, context);
         }
       } catch (error) {
         context.response.body = JSON.stringify(error);
@@ -40,5 +40,11 @@ export default class Kernel {
         }
       );
     });
+  }
+
+  private async dispatch(i: number, context: Context) {
+    const middleware = this.middleware[i];
+
+    await middleware(context, this.dispatch.bind(null, i++));
   }
 };

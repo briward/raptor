@@ -1,6 +1,6 @@
 import type { AnyObject, ObjectSchema } from "npm:yup@1.4.0";
 
-import RequestValidator, { type ValidationResponse } from "@amber/http/request-validator.ts";
+import RequestValidator, { type ValidationResponse } from "./request-validator.ts";
 
 export default class HttpRequest extends Request {
   private validator : RequestValidator;

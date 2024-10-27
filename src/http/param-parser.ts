@@ -1,4 +1,4 @@
-import type { Params } from "@amber/interfaces/context.ts";
+import type { Params } from "../interfaces/context.ts";
 
 export default class ParamParser {
   public pattern : URLPattern;

@@ -2,7 +2,7 @@
 
 import type { ObjectSchema, AnyObject } from 'npm:yup@1.4.0';
 
-import BadRequest from "@amber/error/bad-request.ts";
+import BadRequest from "../error/bad-request.ts";
 
 export type ValidationResponse = Promise<{
   [x: string]: any;
