@@ -77,7 +77,7 @@ Deno.test("test route influences context response", async () => {
   router.addRoute(route);
 
   const context = new Context(
-    new Request(new URL('http://test.com/test-route')),
+    new Request(new URL("http://test.com/test-route")),
     new Response(null)
   );
 
@@ -105,7 +105,7 @@ Deno.test("test unknown route throws not found", () => {
   router.addRoute(route);
 
   const context = new Context(
-    new Request(new URL('http://test.com/unknown-route')),
+    new Request(new URL("http://test.com/unknown-route")),
     new Response(null)
   );
 
@@ -125,11 +125,11 @@ Deno.test("test context contains route params", () => {
   router.addRoute(route);
 
   const context = new Context(
-    new Request(new URL('http://test.com/test/1')),
+    new Request(new URL("http://test.com/test/1")),
     new Response(null)
   );
 
   router.handle(context).then(() => {
-    assertEquals(context.params.id, '1');
+    assertEquals(context.params.id, "1");
   });
 });
