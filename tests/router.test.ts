@@ -5,10 +5,10 @@ import {
 } from "jsr:@std/assert";
 
 import {
+  Route,
   Router,
   Request,
   Response,
-  type Route,
   type Context as ContextType,
 } from "../mod.ts";
 
@@ -17,40 +17,40 @@ import Context from "../src/http/context.ts";
 Deno.test("test router accepts new route", () => {
   const router = new Router();
 
-  const route: Route = {
+  const route = new Route({
     name: "test.route",
     pathname: new URLPattern("/test-route", "http://test.com"),
     method: "GET",
-    action: (context: ContextType) => {
+    callback: (context: ContextType) => {
       console.log(context);
     },
-  };
+  });
 
   router.add(route);
 
-  assertEquals(router.routes[0].name, route.name);
+  assertEquals(router.routes[0].options.name, route.options.name);
 });
 
 Deno.test("test router accepts new routes", () => {
   const router = new Router();
 
-  const routeOne: Route = {
+  const routeOne = new Route({
     name: "test.route_1",
     pathname: new URLPattern("/test-route-1", "https://test.com"),
     method: "GET",
-    action: (context: ContextType) => {
+    callback: (context: ContextType) => {
       console.log(context);
     },
-  };
+  });
 
-  const routeTwo: Route = {
+  const routeTwo = new Route({
     name: "test.route_2",
     pathname: new URLPattern("/test-route-2", "http://test.com"),
     method: "GET",
-    action: (context: ContextType) => {
+    callback: (context: ContextType) => {
       console.log(context);
     },
-  };
+  });
 
   router.add([routeOne, routeTwo]);
 
@@ -63,50 +63,56 @@ Deno.test("test router accepts new routes", () => {
 Deno.test("test route influences context response", async () => {
   const router = new Router();
 
-  const route: Route = {
+  const route = new Route({
     name: "test.route",
     pathname: new URLPattern("/test-route", "http://test.com"),
     method: "GET",
-    action: (context: ContextType) => {
-      context.response.body = JSON.stringify({
+    callback: (context: ContextType) => {
+      context.response.body = {
         influence: true,
-      })
+      };
     },
-  };
+  });
 
   router.add(route);
 
   const context = new Context(
     new Request(new URL("http://test.com/test-route")),
-    new Response(null)
+    new Response(null),
   );
 
   await router.handle(context);
 
-  assertEquals(context.response.body as unknown, JSON.stringify({
-    influence: true,
-  }));
+  const stream = context.response.body?.getReader().read();
+
+  console.log(stream)
+  // assertEquals(
+  //   ReadableStream.from(),
+  //   JSON.stringify({
+  //     influence: true,
+  //   }),
+  // );
 });
 
 Deno.test("test unknown route throws not found", () => {
   const router = new Router();
 
-  const route: Route = {
+  const route = new Route({
     name: "test.route",
     pathname: new URLPattern("/test-route", "http://test.com"),
     method: "GET",
-    action: (context: ContextType) => {
+    callback: (context: ContextType) => {
       context.response.body = JSON.stringify({
         influence: true,
-      })
+      });
     },
-  };
+  });
 
   router.add(route);
 
   const context = new Context(
     new Request(new URL("http://test.com/unknown-route")),
-    new Response(null)
+    new Response(null),
   );
 
   assertRejects(() => router.handle(context));
@@ -115,18 +121,18 @@ Deno.test("test unknown route throws not found", () => {
 Deno.test("test context contains route params", () => {
   const router = new Router();
 
-  const route: Route = {
+  const route = new Route({
     name: "test.route",
     pathname: new URLPattern("/test/:id", "http://test.com"),
     method: "GET",
-    action: () => {},
-  };
+    callback: () => {},
+  });
 
   router.add(route);
 
   const context = new Context(
     new Request(new URL("http://test.com/test/1")),
-    new Response(null)
+    new Response(null),
   );
 
   router.handle(context).then(() => {

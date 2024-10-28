@@ -1,10 +1,23 @@
 {
-  "name": "@briward/amber",
-  "version": "0.3.0",
+  "name": "@raptor/framework",
+  "version": "0.1.0",
   "exports": "./mod.ts",
+  "publish": {
+    "exclude": [
+      ".github",
+      "examples",
+      "docs",
+      "**/*.test.ts"
+    ]
+  },
   "tasks": {
-    "dev": "deno run --env --allow-all --watch src/kernel.ts",
     "test": "deno test --coverage=coverage-report --allow-all --parallel",
     "test-coverage": "deno coverage coverage-report"
-  }
+  },
+  "fmt": {
+    "exclude": [
+      "README.md"
+    ]
+  },
+  "lock": false
 }

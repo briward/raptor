@@ -4,11 +4,17 @@ import type { AnyObject, ObjectSchema } from "npm:yup@1.4.0";
 
 import BadRequest from "../error/bad-request.ts";
 
+/**
+ * The response type from validation.
+ */
 export type ValidationResponse = Promise<{
   [x: string]: any;
   [x: number]: any;
 }>;
 
+/**
+ * The validator which is attached to the request.
+ */
 export default class RequestValidator {
   public validate(
     data: object,

@@ -1,8 +1,9 @@
-// deno-lint-ignore-file
+import { Buffer } from "node:buffer";
+
 export default class HttpResponse extends Response {
   #status: number;
-  #body: ReadableStream<Uint8Array> | null;
   #headers: Headers;
+  #body: ReadableStream<Uint8Array> | null;
 
   constructor(body: BodyInit | null, init?: ResponseInit) {
     super(body, init);
@@ -24,8 +25,21 @@ export default class HttpResponse extends Response {
     return this.#body;
   }
 
-  override set body(value: any) {
-    this.#body = value;
+  override set body(value: string | object) {
+    if (typeof value === "object") {
+      value = JSON.stringify(value);
+    }
+
+    const buffer = Buffer.from(value);
+
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(buffer);
+        controller.close();
+      },
+    });
+
+    this.#body = stream;
   }
 
   override get headers(): Headers {
@@ -34,5 +48,11 @@ export default class HttpResponse extends Response {
 
   override set headers(value: Headers) {
     this.#headers = value;
+  }
+
+  public async hasBody(): Promise<boolean> {
+    const hasBody = await this.body;
+
+    return !!hasBody;
   }
 }

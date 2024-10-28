@@ -1,14 +1,36 @@
-import type { Params } from "../interfaces/context.ts";
+import type { Params } from "./interfaces/context.ts";
 
+/**
+ * The parser for extracting route parameters.
+ */
 export default class ParamParser {
+  /**
+   * The current URL pattern.
+   */
   public pattern: URLPattern;
+
+  /**
+   * The current HTTP request URL.
+   */
   public url: string;
 
+  /**
+   * Initialise the param parser.
+   *
+   * @constructor
+   * @param pattern The current URL pattern.
+   * @param url The current HTTP request URL.
+   */
   constructor(pattern: URLPattern, url: string) {
     this.pattern = pattern;
     this.url = url;
   }
 
+  /**
+   * Parse the current request and return paramters.
+   *
+   * @returns Returns a params object.
+   */
   public parse(): Params {
     const segments: Array<string> = [];
 

@@ -3,17 +3,40 @@ import HttpRequest from "./http/request.ts";
 import HttpResponse from "./http/response.ts";
 import TypeError from "./error/type-error.ts";
 
+import type { Error } from "./error/interfaces/error.ts";
+
+/**
+ * The root initialiser for the framework.
+ */
 export default class Kernel {
+  /**
+   * @var middleware All loaded middleware.
+   */
   private middleware: CallableFunction[];
 
+  /**
+   * Initialise a kernel object.
+   *
+   * @constructor
+   */
   constructor() {
     this.middleware = [];
   }
 
+  /**
+   * Add a new middleware to the stack.
+   *
+   * @param middleware A callable middleware.
+   */
   public use(middleware: CallableFunction) {
     this.middleware.push(middleware);
   }
 
+  /**
+   * Serve the application.
+   *
+   * @param options Server options.
+   */
   public serve(options: { port: number }) {
     const { port } = options;
 
@@ -28,14 +51,15 @@ export default class Kernel {
           await this.middleware[i](context);
         }
 
-        if (!context.response.body) {
+        const hasBody = await context.response.hasBody();
+
+        if (!hasBody) {
           throw new TypeError(
             "No response body was provided in context, are you missing a return?",
           );
         }
       } catch (error) {
-        context.response.body = JSON.stringify(error);
-        context.response.status = (error as { status: number }).status;
+        return this.handleError(context, error as Error);
       }
 
       return new Response(
@@ -46,5 +70,29 @@ export default class Kernel {
         },
       );
     });
+  }
+
+  /**
+   * Handles an error and returns a response.
+   *
+   * @param context The current http context.
+   * @param error The error thrown by the application.
+   * @returns void
+   */
+  private handleError(context: Context, error: Error): Response {
+    context.response.body = error.message;
+    context.response.status = error.status;
+
+    if (context.response.headers.get("content-type") === "application/json") {
+      context.response.body = error;
+    }
+
+    return new Response(
+      context.response.body,
+      {
+        status: context.response.status,
+        headers: context.response.headers,
+      },
+    );
   }
 }
