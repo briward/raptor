@@ -48,6 +48,8 @@ for more information.
 const router = new Router();
 
 const route = new Route({
+  name: "page.read",
+  method: "GET",
   pathname: new URLPattern("/pages/:id");
   action: (context: Context) => {
     const { id } = context.params;
