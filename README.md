@@ -47,10 +47,8 @@ for more information.
 ```ts
 const router = new Router();
 
-router.addRoute({
-  name: "home";
+const route = new Route({
   pathname: new URLPattern("/pages/:id");
-  method: "GET";
   action: (context: Context) => {
     const { id } = context.params;
 
@@ -59,6 +57,8 @@ router.addRoute({
     }
   }
 });
+
+router.add(route);
 
 app.use((context: Context) => router.handle(context));
 ```
