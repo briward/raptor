@@ -1,15 +1,15 @@
 import {
+  assertArrayIncludes,
   assertEquals,
   assertRejects,
-  assertArrayIncludes,
 } from "jsr:@std/assert";
 
 import {
-  Route,
-  Router,
+  type Context as ContextType,
   Request,
   Response,
-  type Context as ContextType,
+  Route,
+  Router,
 } from "../mod.ts";
 
 import Context from "../src/http/context.ts";
