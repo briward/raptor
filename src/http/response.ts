@@ -1,4 +1,15 @@
 import { Buffer } from "node:buffer";
+import type { URLSearchParams } from "node:url";
+
+type ResponseBody = 
+  string | 
+  object | 
+  Blob | 
+  ArrayBuffer | 
+  DataView | 
+  FormData | 
+  ReadableStream | 
+  URLSearchParams;
 
 export default class HttpResponse extends Response {
   #status: number;
@@ -25,8 +36,10 @@ export default class HttpResponse extends Response {
     return this.#body;
   }
 
-  override set body(value: string | object) {
+  override set body(value: ResponseBody) {
     if (typeof value === "object") {
+      this.headers.set('content-type', 'application/json');
+
       value = JSON.stringify(value);
     }
 

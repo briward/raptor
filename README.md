@@ -42,9 +42,7 @@ import { type Context, Kernel } from "jsr:@briward/raptor";
 const app = new Kernel();
 
 app.use((context: Context) => {
-  context.response.body = JSON.stringify({
-    hello: "world",
-  });
+  context.response.body = 'Hello world!';
 });
 
 app.serve({ port: 3000 });
@@ -102,21 +100,11 @@ they are present in the URLPattern pathname.
 
 ### Returning JSON responses
 
-For ease of development, the ability to return JSON responses from a callback is
-built-in. You can do this by defining the JSON content-type header in an initial
-callback.
+If a JSON object is assigned to the response body then the response content-type will be automatically set to `application/json`. You can override the header by manually assigning it within a middleware callback as follows:
 
 ```ts
 app.use((context: Context) => {
-  context.response.headers.set("Content-Type", "application/json");
-});
-
-app.use((context: Context) => {
-  context.response.body = {
-    data: {
-      name: "Deno",
-    },
-  };
+  context.response.headers.set('content-type', 'text/plain');
 });
 ```
 

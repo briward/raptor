@@ -61,6 +61,11 @@ Deno.test("test router accepts new routes", () => {
 });
 
 Deno.test("test route influences context response", async () => {
+  const context = new Context(
+    new Request(new URL("http://test.com/test-route")),
+    new Response(null),
+  );
+
   const router = new Router();
 
   const route = new Route({
@@ -76,22 +81,11 @@ Deno.test("test route influences context response", async () => {
 
   router.add(route);
 
-  const context = new Context(
-    new Request(new URL("http://test.com/test-route")),
-    new Response(null),
-  );
-
   await router.handle(context);
 
-  const stream = context.response.body?.getReader().read();
+  const response = await new Response(context.response.body).text();
 
-  console.log(stream)
-  // assertEquals(
-  //   ReadableStream.from(),
-  //   JSON.stringify({
-  //     influence: true,
-  //   }),
-  // );
+  assertEquals(response, JSON.stringify({ influence: true }));
 });
 
 Deno.test("test unknown route throws not found", () => {
