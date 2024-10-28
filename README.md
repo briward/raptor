@@ -1,7 +1,7 @@
 # raptor
 
-[![jsr.io/@oak/oak](https://jsr.io/badges/@briward/raptor)](https://jsr.io/@briward/raptor)
-[![jsr.io/@briward/raptor score](https://jsr.io/badges/@briward/raptor/score)](https://jsr.io/@briward/raptor)
+[![jsr.io/@oak/oak](https://jsr.io/badges/@raptor/framework)](https://jsr.io/@raptor/framework)
+[![jsr.io/@raptor/framework score](https://jsr.io/badges/@raptor/framework/score)](https://jsr.io/@raptor/framework)
 
 A tiny middleware framework written for use with Deno.
 
@@ -19,16 +19,16 @@ Express and Slim Framework in PHP.
 ### Using the Deno CLI
 
 ```
-deno add @briward/raptor
+deno add @raptor/framework
 ```
 
 ### Importing with JSR
 
 raptor is also available to import directly via JSR:
-[https://jsr.io/@briward/raptor](https://jsr.io/@briward/raptor)
+[https://jsr.io/@raptor/framework](https://jsr.io/@raptor/framework)
 
 ```ts
-import { type Context, Kernel } from "jsr:@briward/raptor";
+import { type Context, Kernel } from "jsr:@raptor/framework";
 ```
 
 ## Middleware
@@ -37,7 +37,7 @@ Middleware can be added using the `use` method of the application Kernel. Each
 middleware's callback will be processed during the `serve` method.
 
 ```ts
-import { type Context, Kernel } from "jsr:@briward/raptor";
+import { type Context, Kernel } from "jsr:@raptor/framework";
 
 const app = new Kernel();
 
@@ -71,7 +71,7 @@ for more information.
 ### Initialising the router
 
 ```ts
-import { Kernel, type Context, Router, Route } from "jsr:@briward/raptor";
+import { Kernel, type Context, Router, Route } from "jsr:@raptor/framework";
 
 const app = new Kernel();
 
