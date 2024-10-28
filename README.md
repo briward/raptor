@@ -1,6 +1,6 @@
 # raptor
 
-[![jsr.io/@oak/oak](https://jsr.io/badges/@briward/raptor)](https://jsr.io/@briward/raptor)
+[![jsr.io/@briward/raptor](https://jsr.io/badges/@briward/raptor)](https://jsr.io/@briward/raptor)
 [![jsr.io/@briward/raptor score](https://jsr.io/badges/@briward/raptor/score)](https://jsr.io/@briward/raptor)
 
 A tiny middleware framework written for use with Deno.
