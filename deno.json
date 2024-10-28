@@ -1,5 +1,5 @@
 {
-  "name": "@raptor/framework",
+  "name": "@briward/raptor",
   "version": "0.1.0",
   "exports": "./mod.ts",
   "publish": {
