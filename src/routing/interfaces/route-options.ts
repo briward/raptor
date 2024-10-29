@@ -18,7 +18,7 @@ export interface RouteOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
   /**
-   * The callback function when handling the route.
+   * The handler function when processing the route.
    */
-  callback: CallableFunction;
+  handler: CallableFunction;
 }

@@ -1,9 +1,25 @@
-# raptor
+<p align="center">
+  <img src="./assets//logo.svg" width="200" />
+</p>
 
-[![jsr.io/@briward/raptor](https://jsr.io/badges/@briward/raptor)](https://jsr.io/@briward/raptor)
-[![jsr.io/@briward/raptor score](https://jsr.io/badges/@briward/raptor/score)](https://jsr.io/@briward/raptor)
+<p align="center">
+  <!-- <a href="https://github.com/briward/raptor/actions">
+    <img src="https://github.com/briward/raptor/workflows/ci/badge.svg" alt="Build Status">
+  </a> -->
+  <a href="jsr.io/@briward/raptor">
+    <img src="https://jsr.io/badges/@briward/raptor?logoColor=E93B45&color=E93B45&labelColor=083344" />
+  </a>
+  <a href="jsr.io/@briward/raptor score">
+    <img src="https://jsr.io/badges/@briward/raptor/score?logoColor=E93B45&color=E93B45&labelColor=083344" />
+  </a>
+  <a href="https://jsr.io/@briward">
+    <img src="https://jsr.io/badges/@briward?logoColor=E93B45&color=E93B45&labelColor=083344" alt="" />
+  </a>
+</p>
 
-A tiny middleware framework written for use with Deno.
+# About Raptor
+
+Raptor is a container-based middleware framework written for use with Deno.
 
 This framework is heavily inspired by many who came before it, such as Oak,
 Express and Slim Framework in PHP.
@@ -24,25 +40,26 @@ deno add @briward/raptor
 
 ### Importing with JSR
 
-raptor is also available to import directly via JSR:
+Raptor is also available to import directly via JSR:
 [https://jsr.io/@briward/raptor](https://jsr.io/@briward/raptor)
 
 ```ts
 import { type Context, Kernel } from "jsr:@briward/raptor";
 ```
 
-## Middleware
+## HTTP Middleware
 
-Middleware can be added using the `use` method of the application Kernel. Each
-middleware's callback will be processed during the `serve` method.
+HTTP Middleware can be added to the container using the `add` method of the application Kernel. Each middleware should implement the Raptor Middleware interface and will be processed during the `serve` method.
 
 ```ts
 import { type Context, Kernel } from "jsr:@briward/raptor";
 
 const app = new Kernel();
 
-app.use((context: Context) => {
-  context.response.body = 'Hello world!';
+app.add({
+  handler: (context: Context) => {
+    context.response.body = 'Hello world!';
+  }
 });
 
 app.serve({ port: 3000 });
@@ -50,8 +67,7 @@ app.serve({ port: 3000 });
 
 ### Middleware Context
 
-The context object is provided as the first parameter of a middleware callback
-function. This object contains the following type properties:
+The context object is provided as the first parameter of a middleware handler function. This object contains the following type properties:
 
 ```ts
 {
@@ -68,10 +84,15 @@ pass in routes using Web API standard URL patterns. See
 [mozilla.org/URLPattern](https://developer.mozilla.org/en-US/docs/Web/API/URLPattern)
 for more information.
 
-### Initialising the router
+### Adding routes to the router
 
 ```ts
-import { Kernel, type Context, Router, Route } from "jsr:@briward/raptor";
+import { 
+  Kernel, 
+  type Context, 
+  Router, 
+  Route 
+} from "jsr:@briward/raptor";
 
 const app = new Kernel();
 
@@ -81,7 +102,7 @@ const route = new Route({
   name: "person.read",
   method: "GET",
   pathname: new URLPattern("/person/:name");
-  callback: (context: Context) => {
+  handler: (context: Context) => {
     const { name } = context.params;
 
     context.response.body = `Hello ${name}`;
@@ -90,7 +111,7 @@ const route = new Route({
 
 router.add(route);
 
-app.use((context: Context) => router.handle(context));
+app.add(router);
 ```
 
 ### Route parameters
@@ -103,8 +124,10 @@ they are present in the URLPattern pathname.
 If a JSON object is assigned to the response body then the response content-type will be automatically set to `application/json`. You can override the header by manually assigning it within a middleware callback as follows:
 
 ```ts
-app.use((context: Context) => {
-  context.response.headers.set('content-type', 'text/plain');
+app.add({
+  handler: (context: Context) => {
+    context.response.headers.set('content-type', 'text/plain');
+  }
 });
 ```
 

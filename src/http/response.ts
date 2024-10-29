@@ -68,4 +68,16 @@ export default class HttpResponse extends Response {
 
     return !!hasBody;
   }
+
+  public isJson(): boolean {
+    const regex = new RegExp(/application\/.*json.*/gm);
+
+    const type = this.headers.get('content-type') as string;
+
+    if (!type) return false;
+
+    const matches = type.match(regex);
+
+    return !!matches?.length || false;
+  }
 }

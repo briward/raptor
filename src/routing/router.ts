@@ -4,11 +4,12 @@ import TypeError from "../error/type-error.ts";
 import ParamParser from "../http/param-parser.ts";
 
 import type { Context } from "../http/interfaces/context.ts";
+import type Middleware from "../http/interfaces/middleware.ts";
 
 /**
  * The application router.
  */
-export default class Router {
+export default class Router implements Middleware {
   /**
    * All loaded routes.
    */
@@ -67,7 +68,7 @@ export default class Router {
    * @returns void
    * @throws {NotFound | TypeError}
    */
-  public async handle(context: Context): Promise<void> {
+  public async handler(context: Context): Promise<void> {
     const { request } = context;
 
     const route = this.getRouteFromRequest(request);
@@ -81,11 +82,11 @@ export default class Router {
 
     context.params = params;
 
-    if (typeof route.options.callback !== "function") {
-      throw new TypeError("No callback function was provided for route");
+    if (typeof route.options.handler !== "function") {
+      throw new TypeError("No handler function was provided for route");
     }
 
-    await route.options.callback(context);
+    await route.options.handler(context);
   }
 
   /**

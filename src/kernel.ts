@@ -4,15 +4,17 @@ import HttpResponse from "./http/response.ts";
 import TypeError from "./error/type-error.ts";
 
 import type { Error } from "./error/interfaces/error.ts";
+import type Middleware from "./http/interfaces/middleware.ts";
+import { container, type DependencyContainer } from 'npm:tsyringe@^4.4.0';
 
 /**
  * The root initialiser for the framework.
  */
 export default class Kernel {
   /**
-   * @var middleware All loaded middleware.
+   * @var DependencyContainer The dependency injection container.
    */
-  private middleware: CallableFunction[];
+  private container: DependencyContainer;
 
   /**
    * Initialise a kernel object.
@@ -20,16 +22,16 @@ export default class Kernel {
    * @constructor
    */
   constructor() {
-    this.middleware = [];
+    this.container = container;
   }
 
   /**
-   * Add a new middleware to the stack.
+   * Add a new middleware to the container.
    *
-   * @param middleware A callable middleware.
+   * @param middleware A middleware instance.
    */
-  public use(middleware: CallableFunction) {
-    this.middleware.push(middleware);
+  public add(middleware: Middleware) {
+    this.container.registerInstance<Middleware>('middleware', middleware);
   }
 
   /**
@@ -47,8 +49,10 @@ export default class Kernel {
       );
 
       try {
-        for (let i = 0; i < this.middleware.length; i++) {
-          await this.middleware[i](context);
+        const middleware : Middleware[] = this.container.resolveAll('middleware');
+
+        for (let i = 0; i < middleware.length; i++) {
+          await middleware[i].handler(context);
         }
 
         const hasBody = await context.response.hasBody();
@@ -73,6 +77,15 @@ export default class Kernel {
   }
 
   /**
+   * Fetch the application container.
+   *
+   * @returns {DependencyContainer} The app container.
+   */
+  public getContainer(): DependencyContainer {
+    return this.container;
+  }
+
+  /**
    * Handles an error and returns a response.
    *
    * @param context The current http context.
@@ -83,7 +96,7 @@ export default class Kernel {
     context.response.body = error.message;
     context.response.status = error.status;
 
-    if (context.response.headers.get("content-type") === "application/json") {
+    if (context.response.isJson()) {
       context.response.body = error;
     }
 
