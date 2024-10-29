@@ -4,7 +4,7 @@ import HttpResponse from "./http/response.ts";
 import TypeError from "./error/type-error.ts";
 
 import type { Error } from "./error/interfaces/error.ts";
-import type Middleware from "./http/interfaces/middleware.ts";
+import type { Middleware } from "./http/interfaces/middleware.ts";
 import { container, type DependencyContainer } from "npm:tsyringe@^4.8.0";
 
 /**

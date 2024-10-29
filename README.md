@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets//logo.svg" width="300" />
+  <img src="./assets//logo.png" width="300" />
 </p>
 
 <p align="center">
@@ -11,7 +11,7 @@
 
 # About Raptor
 
-Raptor is a container-based middleware framework written for use with Deno.
+Raptor is a modular, container-based middleware framework written for use with Deno.
 
 This framework is heavily inspired by many who came before it, such as Oak,
 Express and Slim Framework in PHP.
@@ -69,65 +69,17 @@ The context object is provided as the first parameter of a middleware handler fu
 }
 ```
 
-## Using the built-in router middleware
-
-The built-in router works in the same way as regular middleware, allowing you to
-pass in routes using Web API standard URL patterns. See
-[mozilla.org/URLPattern](https://developer.mozilla.org/en-US/docs/Web/API/URLPattern)
-for more information.
-
-### Adding routes to the router
-
-```ts
-import { 
-  Kernel, 
-  type Context, 
-  Router, 
-  Route 
-} from "jsr:@raptor/framework";
-
-const app = new Kernel();
-
-const router = new Router();
-
-const route = new Route({
-  name: "person.read",
-  method: "GET",
-  pathname: new URLPattern("/person/:name");
-  handler: (context: Context) => {
-    const { name } = context.params;
-
-    context.response.body = `Hello ${name}`;
-  }
-});
-
-router.add(route);
-
-app.add(router);
-```
-
-### Route parameters
-
-Route parameters are processed and available via Context (`context.params`) if
-they are present in the URLPattern pathname.
-
-### Returning JSON responses
-
-If a JSON object is assigned to the response body then the response content-type will be automatically set to `application/json`. You can override the header by manually assigning it within a middleware callback as follows:
-
-```ts
-app.add({
-  handler: (context: Context) => {
-    context.response.headers.set('content-type', 'text/plain');
-  }
-});
-```
-
 ## Error handling
 
 Errors are caught and returned in the response object. If the JSON content-type
 is set within a middleware callback, all errors thrown in subsequent callbacks
 will respond with JSON, by design.
+
+# Available modules
+
+Raptor is designed to be an unopinionated modular framework, allowing you to decide what batteries you wish to include or not. Here is a list of the first-party modules available:
+
+* Router middleware: [https://jsr.io/@raptor/router](https://jsr.io/@raptor/router)
 
 # License
 

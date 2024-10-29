@@ -3,7 +3,7 @@ import type Context from "../context.ts";
 /**
  * The middleware definition.
  */
-export default interface Middleware {
+export interface Middleware {
   /**
    * The handler method for middleware.
    *
