@@ -4,8 +4,8 @@
 
 <p align="center">
   <a href="https://github.com/briward/raptor/actions"><img src="https://github.com/briward/raptor/workflows/ci/badge.svg" alt="Build Status"></a>
-  <a href="jsr.io/@briward/raptor"><img src="https://jsr.io/badges/@briward/raptor?logoColor=3A9D95&color=3A9D95&labelColor=083344" /></a>
-  <a href="jsr.io/@briward/raptor score"><img src="https://jsr.io/badges/@briward/raptor/score?logoColor=3A9D95&color=3A9D95&labelColor=083344" /></a>
+  <a href="jsr.io/@raptor/framework"><img src="https://jsr.io/badges/@raptor/framework?logoColor=3A9D95&color=3A9D95&labelColor=083344" /></a>
+  <a href="jsr.io/@raptor/framework score"><img src="https://jsr.io/badges/@raptor/framework/score?logoColor=3A9D95&color=3A9D95&labelColor=083344" /></a>
   <a href="https://jsr.io/@briward"><img src="https://jsr.io/badges/@briward?logoColor=3A9D95&color=3A9D95&labelColor=083344" alt="" /></a>
 </p>
 
@@ -27,16 +27,16 @@ Express and Slim Framework in PHP.
 ### Using the Deno CLI
 
 ```
-deno add @briward/raptor
+deno add @raptor/framework
 ```
 
 ### Importing with JSR
 
 Raptor is also available to import directly via JSR:
-[https://jsr.io/@briward/raptor](https://jsr.io/@briward/raptor)
+[https://jsr.io/@raptor/framework](https://jsr.io/@raptor/framework)
 
 ```ts
-import { type Context, Kernel } from "jsr:@briward/raptor";
+import { type Context, Kernel } from "jsr:@raptor/framework";
 ```
 
 ## HTTP Middleware
@@ -44,7 +44,7 @@ import { type Context, Kernel } from "jsr:@briward/raptor";
 HTTP Middleware can be added to the container using the `add` method of the application Kernel. Each middleware should implement the Raptor Middleware interface and will be processed during the `serve` method.
 
 ```ts
-import { type Context, Kernel } from "jsr:@briward/raptor";
+import { type Context, Kernel } from "jsr:@raptor/framework";
 
 const app = new Kernel();
 
@@ -84,7 +84,7 @@ import {
   type Context, 
   Router, 
   Route 
-} from "jsr:@briward/raptor";
+} from "jsr:@raptor/framework";
 
 const app = new Kernel();
 
