@@ -19,7 +19,7 @@ export interface Context {
    * The current HTTP request.
    */
   request: HttpRequest;
-  
+
   /**
    * The current HTTP response.
    */

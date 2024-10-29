@@ -72,7 +72,7 @@ export default class HttpResponse extends Response {
   public isJson(): boolean {
     const regex = new RegExp(/application\/.*json.*/gm);
 
-    const type = this.headers.get('content-type') as string;
+    const type = this.headers.get("content-type") as string;
 
     if (!type) return false;
 

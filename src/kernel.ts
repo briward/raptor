@@ -5,7 +5,7 @@ import TypeError from "./error/type-error.ts";
 
 import type { Error } from "./error/interfaces/error.ts";
 import type Middleware from "./http/interfaces/middleware.ts";
-import { container, type DependencyContainer } from 'npm:tsyringe@^4.8.0';
+import { container, type DependencyContainer } from "npm:tsyringe@^4.8.0";
 
 /**
  * The root initialiser for the framework.
@@ -31,7 +31,7 @@ export default class Kernel {
    * @param middleware A middleware instance.
    */
   public add(middleware: Middleware) {
-    this.container.registerInstance<Middleware>('middleware', middleware);
+    this.container.registerInstance<Middleware>("middleware", middleware);
   }
 
   /**
@@ -49,7 +49,9 @@ export default class Kernel {
       );
 
       try {
-        const middleware : Middleware[] = this.container.resolveAll('middleware');
+        const middleware: Middleware[] = this.container.resolveAll(
+          "middleware",
+        );
 
         for (let i = 0; i < middleware.length; i++) {
           await middleware[i].handler(context);

@@ -10,4 +10,4 @@ export default interface Middleware {
    * @param context The current HTTP context.
    */
   handler(context: Context): void;
-};
+}
