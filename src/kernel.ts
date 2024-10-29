@@ -5,7 +5,7 @@ import TypeError from "./error/type-error.ts";
 
 import type { Error } from "./error/interfaces/error.ts";
 import type Middleware from "./http/interfaces/middleware.ts";
-import { container, type DependencyContainer } from 'npm:tsyringe@^4.4.0';
+import { container, type DependencyContainer } from 'npm:tsyringe@^4.8.0';
 
 /**
  * The root initialiser for the framework.

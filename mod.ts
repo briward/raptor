@@ -1,6 +1,6 @@
 // Copyright 2024, @briward. All rights reserved. MIT license.
 
-import "npm:reflect-metadata";
+import "npm:reflect-metadata@0.2.2";
 
 import Kernel from "./src/kernel.ts";
 import Route from "./src/routing/route.ts";
