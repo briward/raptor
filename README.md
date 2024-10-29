@@ -6,7 +6,7 @@
   <a href="https://github.com/briward/raptor/actions"><img src="https://github.com/briward/raptor/workflows/ci/badge.svg" alt="Build Status"></a>
   <a href="jsr.io/@raptor/framework"><img src="https://jsr.io/badges/@raptor/framework?logoColor=3A9D95&color=3A9D95&labelColor=083344" /></a>
   <a href="jsr.io/@raptor/framework score"><img src="https://jsr.io/badges/@raptor/framework/score?logoColor=3A9D95&color=3A9D95&labelColor=083344" /></a>
-  <a href="https://jsr.io/@briward"><img src="https://jsr.io/badges/@briward?logoColor=3A9D95&color=3A9D95&labelColor=083344" alt="" /></a>
+  <a href="https://jsr.io/@raptor"><img src="https://jsr.io/badges/@briward?logoColor=3A9D95&color=3A9D95&labelColor=083344" alt="" /></a>
 </p>
 
 # About Raptor
