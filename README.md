@@ -4,9 +4,9 @@
 
 <p align="center">
   <a href="https://github.com/briward/raptor/actions"><img src="https://github.com/briward/raptor/workflows/ci/badge.svg" alt="Build Status"></a>
-  <a href="jsr.io/@briward/raptor"><img src="https://jsr.io/badges/@briward/raptor?logoColor=CD404F&color=CD404F&labelColor=083344" /></a>
-  <a href="jsr.io/@briward/raptor score"><img src="https://jsr.io/badges/@briward/raptor/score?logoColor=CD404F&color=CD404F&labelColor=083344" /></a>
-  <a href="https://jsr.io/@briward"><img src="https://jsr.io/badges/@briward?logoColor=CD404F&color=CD404F&labelColor=083344" alt="" /></a>
+  <a href="jsr.io/@briward/raptor"><img src="https://jsr.io/badges/@briward/raptor?logoColor=247D77&color=247D77&labelColor=083344" /></a>
+  <a href="jsr.io/@briward/raptor score"><img src="https://jsr.io/badges/@briward/raptor/score?logoColor=247D77&color=247D77&labelColor=083344" /></a>
+  <a href="https://jsr.io/@briward"><img src="https://jsr.io/badges/@briward?logoColor=247D77&color=247D77&labelColor=083344" alt="" /></a>
 </p>
 
 # About Raptor
