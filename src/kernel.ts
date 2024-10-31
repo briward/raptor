@@ -4,7 +4,8 @@ import HttpResponse from "./http/response.ts";
 import TypeError from "./error/type-error.ts";
 
 import type { Error } from "./error/interfaces/error.ts";
-import type { Middleware } from "./http/interfaces/middleware.ts";
+import type ServiceProvider from "./container/service-provider.ts";
+
 import { container, type DependencyContainer } from "npm:tsyringe@^4.8.0";
 
 /**
@@ -14,7 +15,7 @@ export default class Kernel {
   /**
    * @var DependencyContainer The dependency injection container.
    */
-  private container: DependencyContainer;
+  public container: DependencyContainer;
 
   /**
    * Initialise a kernel object.
@@ -26,12 +27,12 @@ export default class Kernel {
   }
 
   /**
-   * Add a new middleware to the container.
+   * Add a new module to the container.
    *
-   * @param middleware A middleware instance.
+   * @param module A module instance.
    */
-  public add(middleware: Middleware) {
-    this.container.registerInstance<Middleware>("middleware", middleware);
+  public add(module: ServiceProvider) {
+    this.container.registerInstance<ServiceProvider>('provider', module);
   }
 
   /**
@@ -42,6 +43,8 @@ export default class Kernel {
   public serve(options: { port: number }) {
     const { port } = options;
 
+    this.registerServiceProviders();
+
     Deno.serve({ port }, async (request: Request) => {
       const context = new Context(
         new HttpRequest(request),
@@ -49,7 +52,7 @@ export default class Kernel {
       );
 
       try {
-        const middleware: Middleware[] = this.container.resolveAll(
+        const middleware: any[] = this.container.resolveAll(
           "middleware",
         );
 
@@ -79,15 +82,6 @@ export default class Kernel {
   }
 
   /**
-   * Fetch the application container.
-   *
-   * @returns {DependencyContainer} The app container.
-   */
-  public getContainer(): DependencyContainer {
-    return this.container;
-  }
-
-  /**
    * Handles an error and returns a response.
    *
    * @param context The current http context.
@@ -109,5 +103,16 @@ export default class Kernel {
         headers: context.response.headers,
       },
     );
+  }
+
+  /**
+   * Run the register method of all loaded service providers.
+   *
+   * @returns void
+   */
+  private registerServiceProviders(): void {
+    const providers : ServiceProvider[] = this.container.resolveAll('provider');
+
+    providers.forEach((provider) => provider.register());
   }
 }

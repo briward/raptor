@@ -6,12 +6,12 @@
   <a href="https://github.com/briward/raptor/actions"><img src="https://github.com/briward/raptor/workflows/ci/badge.svg" alt="Build Status"></a>
   <a href="jsr.io/@raptor/framework"><img src="https://jsr.io/badges/@raptor/framework?logoColor=3A9D95&color=3A9D95&labelColor=083344" /></a>
   <a href="jsr.io/@raptor/framework score"><img src="https://jsr.io/badges/@raptor/framework/score?logoColor=3A9D95&color=3A9D95&labelColor=083344" /></a>
-  <a href="https://jsr.io/@raptor"><img src="https://jsr.io/badges/@briward?logoColor=3A9D95&color=3A9D95&labelColor=083344" alt="" /></a>
+  <a href="https://jsr.io/@raptor"><img src="https://jsr.io/badges/@raptor?logoColor=3A9D95&color=3A9D95&labelColor=083344" alt="" /></a>
 </p>
 
 # About Raptor
 
-Raptor is a modular, container-based middleware framework written for use with Deno.
+Raptor is an unopinionated, service-orientated middleware framework written for use with Deno.
 
 This framework is heavily inspired by many who came before it, such as Oak,
 Express and Slim Framework in PHP.
@@ -39,20 +39,34 @@ Raptor is also available to import directly via JSR:
 import { type Context, Kernel } from "jsr:@raptor/framework";
 ```
 
+## Service Providers
+
+A service provider allows you to register container bindings, which includes middleware that will be processed on each request. At least one middleware needs to be registered with the container otherwise the application will throw an error.
+
 ## HTTP Middleware
 
-HTTP Middleware can be added to the container using the `add` method of the application Kernel. Each middleware should implement the Raptor Middleware interface and will be processed during the `serve` method.
+HTTP Middleware can be added to the container by registering via a Service Provider. Each middleware should implement the Middleware interface and will be processed during the `serve` method.
 
 ```ts
-import { type Context, Kernel } from "jsr:@raptor/framework";
+import { type Context, Kernel, Middleware, ServiceProvider } from "jsr:@raptor/framework";
 
 const app = new Kernel();
 
-app.add({
-  handler: (context: Context) => {
-    context.response.body = 'Hello world!';
+class HelloWorld extends Middleware {
+  override handler(context: Context) {
+    context.response.body = {
+      hello: 'world'
+    }
   }
-});
+}
+
+class MyService extends ServiceProvider {
+  override register() {
+    this.container.registerInstance('middleware', MyMiddleware);
+  }
+}
+
+app.add(MyService);
 
 app.serve({ port: 3000 });
 ```
