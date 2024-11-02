@@ -14,7 +14,7 @@
 Raptor is an unopinionated, service-orientated middleware framework written for use with Deno.
 
 This framework is heavily inspired by many who came before it, such as Oak,
-Express and Slim Framework in PHP.
+Express, Laravel and Slim Framework in PHP.
 
 # Usage
 
@@ -79,7 +79,6 @@ The context object is provided as the first parameter of a middleware handler fu
 {
   request: HttpRequest,
   response: HttpResponse,
-  params: RouteParams,
 }
 ```
 
@@ -89,9 +88,9 @@ Errors are caught and returned in the response object. If the JSON content-type
 is set within a middleware callback, all errors thrown in subsequent callbacks
 will respond with JSON, by design.
 
-# Available modules
+# Available extensions
 
-Raptor is designed to be an unopinionated modular framework, allowing you to decide what batteries you wish to include or not. Here is a list of the first-party modules available:
+Raptor is designed to be an unopinionated modular framework, allowing you to decide what batteries you wish to include or not. Here is a list of the first-party extensions available:
 
 * Router middleware: [https://jsr.io/@raptor/router](https://jsr.io/@raptor/router)
 
