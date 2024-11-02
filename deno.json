@@ -12,6 +12,7 @@
   },
   "tasks": {
     "test": "deno test --coverage=coverage-report --allow-all --parallel",
+    "test-watch": "deno test --watch",
     "test-coverage": "deno coverage coverage-report"
   },
   "fmt": {

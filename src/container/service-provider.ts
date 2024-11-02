@@ -7,7 +7,7 @@ export default abstract class ServiceProvider {
     this.container = container;
   }
 
-  public register() {
+  public register() : void {
     //
   }
 }
