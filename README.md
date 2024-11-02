@@ -62,11 +62,11 @@ class HelloWorld extends Middleware {
 
 class MyService extends ServiceProvider {
   override register() {
-    this.container.registerInstance('middleware', HelloWorld);
+    this.container.registerInstance('middleware', new HelloWorld);
   }
 }
 
-app.add(MyService);
+app.add(new MyService);
 
 app.serve({ port: 3000 });
 ```
