@@ -1,45 +1,47 @@
+// deno-lint-ignore-file no-explicit-any
+
 import Context from "./http/context.ts";
-import HttpRequest from "./http/request.ts";
-import HttpResponse from "./http/response.ts";
-import TypeError from "./error/type-error.ts";
 
 import type { Error } from "./error/interfaces/error.ts";
-import type { Middleware } from "./http/interfaces/middleware.ts";
-import type ServiceProvider from "./container/service-provider.ts";
-
-import { container, type DependencyContainer } from "npm:tsyringe@^4.8.0";
 
 /**
  * The root initialiser for the framework.
  */
 export default class Kernel {
   /**
-   * @var DependencyContainer The dependency injection container.
+   * The current HTTP context.
    */
-  private container: DependencyContainer;
+  private context: Context;
 
   /**
-   * Initialise a kernel object.
-   *
+   * The available middleware.
+   */
+  private middleware: CallableFunction[] = [];
+
+  /**
+   * The current middleware index.
+   */
+  private currentIndex: number = 0;
+
+  /**
+   * Initialise the kernel.
+   * 
    * @constructor
    */
   constructor() {
-    this.container = container;
+    this.context = new Context(
+      new Request(Deno.env.get('APP_URL') as string),
+      new Response(null),
+    );
   }
 
   /**
    * Add a new module to the container.
    *
-   * @param provider A service provider instance.
+   * @param middleware An HTTP middleware instance.
    */
-  public add(provider: ServiceProvider) {
-    this.container.registerInstance<ServiceProvider>("provider", provider);
-
-    // Fetch all registered service providers.
-    const providers = this.container.resolveAll<ServiceProvider>("provider");
-
-    // Register all bound services from service providers.
-    providers.forEach((provider) => provider.register());
+  public add(middleware: CallableFunction) {
+    this.middleware.push(middleware);
   }
 
   /**
@@ -51,80 +53,111 @@ export default class Kernel {
     const { port } = options;
 
     Deno.serve({ port }, (request: Request) => {
-      return this.handleResponse(request);
+      return this.respond(request);
     });
   }
 
   /**
-   * Get the dependency injection container from the kernel.
+   * Handle an HTTP request and respond.
    *
-   * @returns The dependency injection container.
+   * @param request 
+   * @returns 
    */
-  public getContainer(): DependencyContainer {
-    return this.container;
+  public async respond(request: Request): Promise<Response> {
+    this.context.request = request;
+
+    try {
+      await this.next();
+
+      return this.context.response.clone();
+    } catch (error) {
+      return this.handleError(error as Error);
+    }
+  }
+
+  public async next(): Promise<void> {
+    // Process an individual middleware by index.
+    const execute = async (index: number) => {
+      let called = false;
+
+      if (index < this.middleware.length) {
+        const middleware = this.middleware[index];
+  
+        const body = await middleware(
+          this.context,
+          async () => {
+            called = true
+            await execute(index + 1)
+          }
+        );
+
+        if (!called) {
+          this.context.response = this.process(body);
+        }
+      }
+    }
+
+    // Execute the first middle.
+    await execute(0);
   }
 
   /**
-   * Handle the HTTP request and response.
+   * Process middleware into an HTTP response.
    *
-   * @param request The current HTTP request.
-   * @returns A resolved Response as promise.
+   * @param body The response body.
+   * @returns
    */
-  private async handleResponse(request: Request): Promise<Response> {
-    const context = new Context(
-      new HttpRequest(request),
-      new HttpResponse(null),
-    );
-
-    try {
-      const middleware: Middleware[] = this.container.resolveAll(
-        "middleware",
-      );
-
-      for (let i = 0; i < middleware.length; i++) {
-        await middleware[i].handler(context);
-      }
-
-      const hasBody = await context.response.hasBody();
-
-      if (!hasBody) {
-        throw new TypeError(
-          "No response body was provided in context, are you missing a return?",
-        );
-      }
-    } catch (error) {
-      return this.handleError(context, error as Error);
+  private process(body: any): Response {
+    // If the middleware provides a Response object, use it.
+    if (body instanceof Response) {
+      return body;
     }
 
-    return new Response(
-      context.response.body,
-      {
-        status: context.response.status,
-        headers: context.response.headers,
-      },
-    );
+    const hasContentType = this.context.response.headers.get("content-type");
+
+    // If the middleware returns an object, process it as JSON.
+    if (typeof body === "object") {
+      if (!hasContentType) {
+        this.context.response.headers.set("content-type", "application/json");
+      }
+
+      return new Response(JSON.stringify(body), {
+        headers: this.context.response.headers,
+      });
+    }
+
+    // If the middleware returns a string, process plain text or HTML.
+    if (typeof body === "string") {
+      const isHtml = (new RegExp(/<[a-z/][\s\S]*>/i)).test(body);
+
+      if (!hasContentType) {
+        this.context.response.headers.set("content-type", "text/plain");
+      }
+
+      if (isHtml && !hasContentType) {
+        this.context.response.headers.set("content-type", "text/html");
+      }
+
+      return new Response(body as string, {
+        headers: this.context.response.headers,
+      });
+    }
+
+    return new Response(body as string);
   }
 
   /**
    * Handles an error and returns a response.
    *
-   * @param context The current http context.
    * @param error The error thrown by the application.
    * @returns void
    */
-  private handleError(context: Context, error: Error): Response {
-    context.response.body = error.message;
-    context.response.status = error.status;
-
-    if (context.response.isJson()) {
-      context.response.body = error;
-    }
-
+  private handleError(error: Error): Response {
     return new Response(
-      context.response.body,
+      error.message,
       {
-        status: context.response.status,
-        headers: context.response.headers,
+        status: error.status,
+        headers: this.context.response.headers,
       },
     );
   }

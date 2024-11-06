@@ -1,77 +1,70 @@
-import "npm:reflect-metadata@0.2.2";
-
 import { assertEquals } from "jsr:@std/assert";
 
-import { container } from "npm:tsyringe@^4.8.0";
-import { type Context, Kernel, Middleware, ServiceProvider } from "../mod.ts";
+import { type Context, Kernel } from "../mod.ts";
 
-Deno.test("test kernel handles HTTP response", async () => {
-  const kernel = new Kernel();
+const APP_URL = "http://localhost:8000";
 
-  class TestMiddleware extends Middleware {
-    public override handler(context: Context): void {
-      context.response.body = "Test Successful";
-    }
-  }
+Deno.test("test kernel handles plain text HTTP response", async () => {
+  const app = new Kernel();
 
-  class TestServiceProvider extends ServiceProvider {
-    public override register(): void {
-      container.registerInstance("middleware", new TestMiddleware());
-    }
-  }
+  app.add(() => "Test Successful");
 
-  kernel.add(new TestServiceProvider());
+  const response = await app.respond(new Request(APP_URL));
 
-  const response = await kernel["handleResponse"](
-    new Request("http://localhost:8001"),
-  );
-
-  const body = await response.text();
-
-  assertEquals(body, "Test Successful");
-
-  container.clearInstances();
+  assertEquals(response.headers.get("content-type"), "text/plain");
+  assertEquals(await response.text(), "Test Successful");
 });
 
-Deno.test("test kernel handles invalid HTTP response", async () => {
-  const kernel = new Kernel();
+Deno.test("test kernel handles JSON HTTP response", async () => {
+  const app = new Kernel();
 
-  const response = await kernel["handleResponse"](
-    new Request("http://localhost:8001"),
-  );
+  app.add(() => ({ value: "Test" }));
 
-  const body = await response.text();
+  const response = await app.respond(new Request(APP_URL));
 
-  assertEquals(
-    body,
-    'Attempted to resolve unregistered dependency token: "middleware"',
-  );
+  assertEquals(response.headers.get("content-type"), "application/json");
+  assertEquals(await response.json(), { value: "Test" });
+});
 
-  container.clearInstances();
+Deno.test("test kernel handles HTML HTTP response", async () => {
+  const app = new Kernel();
+
+  app.add(() => "<h1>Test</h1>");
+
+  const response = await app.respond(new Request(APP_URL));
+
+  assertEquals(response.headers.get("content-type"), "text/html");
+  assertEquals(await response.text(), "<h1>Test</h1>");
 });
 
 Deno.test("test kernel updates middleware context", async () => {
-  const kernel = new Kernel();
+  const app = new Kernel();
 
-  class TestContentType extends Middleware {
-    public override handler(context: Context): void {
-      context.response.headers.set("content-type", "application/json");
-    }
-  }
+  app.add((ctx: Context) => {
+    ctx.response.headers.set("content-type", "application/json");
 
-  class TestServiceProvider extends ServiceProvider {
-    public override register(): void {
-      container.registerInstance("middleware", new TestContentType());
-    }
-  }
+    return "Hello, Dr Malcolm!";
+  });
 
-  kernel.add(new TestServiceProvider());
-
-  const response = await kernel["handleResponse"](
-    new Request("http://localhost:8001"),
-  );
+  const response = await app.respond(new Request(APP_URL));
 
   assertEquals(response.headers.get("content-type"), "application/json");
+});
 
-  container.clearInstances();
+Deno.test("test middleware next callback functionality", async () => {
+  const app = new Kernel();
+
+  app.add((_ctx: Context, next: CallableFunction) => {
+    next();
+
+    return "Hello from the first middleware";
+  });
+
+  app.add(() => {
+    return "Hello from the second middleware";
+  });
+
+  const response = await app.respond(new Request(APP_URL));
+
+  assertEquals(await response.text(), "Hello from the second middleware");
 });

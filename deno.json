@@ -1,6 +1,6 @@
 {
   "name": "@raptor/framework",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "exports": "./mod.ts",
   "publish": {
     "exclude": [
@@ -11,8 +11,8 @@
     ]
   },
   "tasks": {
-    "test": "deno test --coverage=coverage-report --allow-all --parallel",
-    "test-watch": "deno test --watch",
+    "test": "APP_URL=http://localhost:8000 deno test --coverage=coverage-report --allow-all --parallel",
+    "test-watch": "APP_URL=http://localhost:8000 deno test --allow-env --watch",
     "test-coverage": "deno coverage coverage-report"
   },
   "fmt": {
