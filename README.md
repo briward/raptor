@@ -118,15 +118,11 @@ app.add(() => ({
 }));
 ```
 
-## HTTPS, SSL
-
-To provide an HTTPS server, then the app.serve() options need to include the options .secure option set to true and supply a .certFile and a .keyFile options as well.
-
 ## Error handling
 
 Errors are caught and returned in the response object. If the JSON content-type is set within a middleware callback, all errors thrown in subsequent callbacks will respond with JSON, by design.
 
-# Deployent
+# Deployment
 
 ## Deno Deploy
 
