@@ -25,12 +25,12 @@ export default class Kernel {
 
   /**
    * Initialise the kernel.
-   * 
+   *
    * @constructor
    */
   constructor() {
     this.context = new Context(
-      new Request(Deno.env.get('APP_URL') as string),
+      new Request(Deno.env.get("APP_URL") as string),
       new Response(null),
     );
   }
@@ -60,8 +60,8 @@ export default class Kernel {
   /**
    * Handle an HTTP request and respond.
    *
-   * @param request 
-   * @returns 
+   * @param request
+   * @returns
    */
   public async respond(request: Request): Promise<Response> {
     this.context.request = request;
@@ -82,20 +82,20 @@ export default class Kernel {
 
       if (index < this.middleware.length) {
         const middleware = this.middleware[index];
-  
+
         const body = await middleware(
           this.context,
           async () => {
-            called = true
-            await execute(index + 1)
-          }
+            called = true;
+            await execute(index + 1);
+          },
         );
 
         if (!called) {
           this.context.response = this.process(body);
         }
       }
-    }
+    };
 
     // Execute the first middle.
     await execute(0);
