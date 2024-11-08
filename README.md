@@ -62,7 +62,7 @@ The following middleware response will be automatically detected as `application
 
 ```ts
 app.add(() => ({
-  name: 'Ian Malcolm',
+  name: 'Dr Ian Malcolm',
 }));
 ```
 
@@ -83,9 +83,7 @@ app.add((context: Context) => {
   context.response.headers.set('content-type', 'application/hal+json');
 
   return {
-    data: {
-      name: 'Ian Malcolm'
-    }
+    name: 'Dr Ian Malcolm'
   }
 });
 ```
@@ -114,7 +112,7 @@ app.add((_context: Context, next: CallableFunction) => {
 });
 
 app.add(() => ({
-  name: 'Ellie Sattler'
+  name: 'Dr Ellie Sattler'
 }));
 ```
 
