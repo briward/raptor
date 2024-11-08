@@ -1,6 +1,5 @@
-// deno-lint-ignore-file no-explicit-any
-
 import Context from "./http/context.ts";
+import Processor from "./http/processor.ts";
 
 import type { Error } from "./error/interfaces/error.ts";
 
@@ -8,6 +7,11 @@ import type { Error } from "./error/interfaces/error.ts";
  * The root initialiser for the framework.
  */
 export default class Kernel {
+  /**
+   * The response processor for the kernel.
+   */
+  private processor : Processor;
+
   /**
    * The current HTTP context.
    */
@@ -19,11 +23,6 @@ export default class Kernel {
   private middleware: CallableFunction[] = [];
 
   /**
-   * The current middleware index.
-   */
-  private currentIndex: number = 0;
-
-  /**
    * Initialise the kernel.
    *
    * @constructor
@@ -33,6 +32,8 @@ export default class Kernel {
       new Request(Deno.env.get("APP_URL") as string),
       new Response(null),
     );
+
+    this.processor = new Processor(this.context);
   }
 
   /**
@@ -92,58 +93,13 @@ export default class Kernel {
         );
 
         if (!called) {
-          this.context.response = this.process(body);
+          this.context.response = this.processor.process(body);
         }
       }
     };
 
     // Execute the first middle.
     await execute(0);
-  }
-
-  /**
-   * Process middleware into an HTTP response.
-   *
-   * @param body The response body.
-   * @returns
-   */
-  private process(body: any): Response {
-    // If the middleware provides a Response object, use it.
-    if (body instanceof Response) {
-      return body;
-    }
-
-    const hasContentType = this.context.response.headers.get("content-type");
-
-    // If the middleware returns an object, process it as JSON.
-    if (typeof body === "object") {
-      if (!hasContentType) {
-        this.context.response.headers.set("content-type", "application/json");
-      }
-
-      return new Response(JSON.stringify(body), {
-        headers: this.context.response.headers,
-      });
-    }
-
-    // If the middleware returns a string, process plain text or HTML.
-    if (typeof body === "string") {
-      const isHtml = (new RegExp(/<[a-z/][\s\S]*>/i)).test(body);
-
-      if (!hasContentType) {
-        this.context.response.headers.set("content-type", "text/plain");
-      }
-
-      if (isHtml && !hasContentType) {
-        this.context.response.headers.set("content-type", "text/html");
-      }
-
-      return new Response(body as string, {
-        headers: this.context.response.headers,
-      });
-    }
-
-    return new Response(body as string);
   }
 
   /**

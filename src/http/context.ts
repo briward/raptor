@@ -1,7 +1,7 @@
 /**
  * The context definition.
  */
-export default class Context implements Context {
+export default class Context {
   /**
    * Initialise an HTTP context.
    *
