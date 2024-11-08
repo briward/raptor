@@ -10,7 +10,7 @@ export default class Kernel {
   /**
    * The response processor for the kernel.
    */
-  private processor : Processor;
+  private processor: Processor;
 
   /**
    * The current HTTP context.

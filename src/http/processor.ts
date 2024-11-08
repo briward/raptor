@@ -9,7 +9,7 @@ export default class Processor {
    * @param context The current HTTP context.
    * @constructor
    */
-  constructor(private context : Context) {}
+  constructor(private context: Context) {}
 
   /**
    * Process a body into a valid Response object.
