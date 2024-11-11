@@ -15,9 +15,10 @@ export default class Processor {
    * Process a body into a valid Response object.
    *
    * @param body A body value to process.
+   * @param status A valid HTTP status code.
    * @returns A valid HTTP response object.
    */
-  public process(body: any): Response {
+  public process(body: any, status: number = 200): Response {
     // If the middleware provides a Response object, use it.
     if (body instanceof Response) {
       return body;
@@ -32,6 +33,7 @@ export default class Processor {
       }
 
       return new Response(JSON.stringify(body), {
+        status,
         headers: this.context.response.headers,
       });
     }
@@ -49,10 +51,14 @@ export default class Processor {
       }
 
       return new Response(body as string, {
+        status,
         headers: this.context.response.headers,
       });
     }
 
-    return new Response(body as string);
+    return new Response(body as string, {
+      status,
+      headers: this.context.response.headers,
+    });
   }
 }

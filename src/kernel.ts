@@ -29,7 +29,7 @@ export default class Kernel {
    */
   constructor() {
     this.context = new Context(
-      new Request(Deno.env.get("APP_URL") as string),
+      new Request("http://localhost"),
       new Response(null),
     );
 
@@ -109,12 +109,6 @@ export default class Kernel {
    * @returns void
    */
   private handleError(error: Error): Response {
-    return new Response(
-      error.message,
-      {
-        status: error.status,
-        headers: this.context.response.headers,
-      },
-    );
+    return this.processor.process(error, error.status);
   }
 }
