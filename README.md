@@ -11,7 +11,7 @@
 
 # Introduction
 
-Raptor is a tiny yet eloquent middleware framework designed for use with Deno. It's been built for those who value readability and expressive code. With Raptor, you'll find a harmonious balance between functionality and simplicity, allowing you to convey complex logic with minimal verbosity.
+Raptor is a lightweight middleware framework for Deno, focusing on readability and clear code. It balances functionality and simplicity, enabling you to express complex logic concisely.
 
 # Usage
 
