@@ -9,24 +9,23 @@
   <a href="https://jsr.io/@raptor"><img src="https://jsr.io/badges/@raptor?logoColor=3A9D95&color=3A9D95&labelColor=083344" alt="" /></a>
 </p>
 
-# About Raptor
+# Introduction
 
-Raptor is a tiny, unopinionated middleware framework written for use with Deno. The goal of this project is to build a simple, easy to use middleware framework using Web Standards.
-
-This framework is heavily inspired by many who came before it, such as Oak, Express, Laravel and Slim Framework in PHP.
+Raptor is a tiny yet eloquent middleware framework designed for use with Deno. It's been built for those who value readability and expressive code. With Raptor, you'll find a harmonious balance between functionality and simplicity, allowing you to convey complex logic with minimal verbosity.
 
 # Usage
 
 > [!NOTE]
-> This is under heavy development and not yet suitable for production use, you
-> have been warned.
+> This is currently under heavy development and is not yet suitable for production use. Please proceed with caution.
 
 ## Installation
+
+To start using Raptor, simply install it through the CLI or import it directly from JSR.
 
 ### Using the Deno CLI
 
 ```
-deno add @raptor/framework
+deno add jsr:@raptor/framework
 ```
 
 ### Importing with JSR
@@ -34,15 +33,13 @@ deno add @raptor/framework
 Raptor is also available to import directly via JSR:
 [https://jsr.io/@raptor/framework](https://jsr.io/@raptor/framework)
 
-```ts
-import { type Context, Kernel } from "jsr:@raptor/framework";
-```
+## Middleware
 
-## Getting started
-
-HTTP Middleware can be added to the container using the `add` method of the Kernel.
+Raptor's kernel will run through and process each middleware in the order they were added to the stack. However, if you wish to process the next middleware within another, you can use the built-in `next` argument which is provided to the callback (see "Calling the next middleware").
 
 ```ts
+// main.ts
+
 import { type Context, Kernel } from "jsr:@raptor/framework";
 
 const app = new Kernel();
@@ -52,13 +49,19 @@ app.add(() => 'Hello, Dr Malcolm!');
 app.serve({ port: 8000 });
 ```
 
+To run this code with Deno:
+
+```
+> deno run --allow-net main.ts
+```
+
 ### Response
 
-With Raptor, setting the response headers is completely optional. Instead, you can simply return the data you wish from the middleware handler and let Raptor decide which content-type header is best for your response.
+In Raptor, at least one middleware function is required to return a body response to ensure that the request cycle completes successfully. The `Content-Type` of your response will be automatically determined by the framework, allowing you to focus on your own application code.
 
 #### Returning JSON
 
-The following middleware response will be automatically detected as `application/json` and the `content-type` header will be set accordingly.
+If the middleware response body is an object, it will be automatically recognized as `application/json`. Consequently, both the `Content-Type` header and the response body will be appropriately set to reflect this format.
 
 ```ts
 app.add(() => ({
@@ -68,7 +71,7 @@ app.add(() => ({
 
 #### Returning HTML
 
-When returning a string, the `content-type` header will automatically be set to `text/plain`. However, if we return a string which has been detected as including HTML, then it will be automatically set to `text/html`.
+When a string is returned, the `Content-Type` header is automatically set to `text/plain`. However, if the string is detected to contain HTML, the `Content-Type` header will be automatically adjusted to `text/html`.
 
 ```ts
 app.add(() => '<h1>Hello, Dr Malcolm!</h1>');
@@ -76,11 +79,11 @@ app.add(() => '<h1>Hello, Dr Malcolm!</h1>');
 
 #### Overriding headers
 
-While it's great not having to configure a `content-type` and simply return the data we want, we might have the need to decide specifically  which header to set. With that in mind, you can do the following:
+Although it's convenient to return data without configuring a `Content-Type`, there may be instances where you need to specify a particular header. In such cases, you can proceed as follows:
 
 ```ts
 app.add((context: Context) => {
-  context.response.headers.set('content-type', 'application/hal+json');
+  context.response.headers.set('Content-Type', 'application/hal+json');
 
   return {
     name: 'Dr Ian Malcolm'
@@ -88,37 +91,57 @@ app.add((context: Context) => {
 });
 ```
 
-### Middleware Context
+### Context
 
-The context object is provided as the first parameter of a middleware function. This object contains the HTTP Request, the HTTP Response and any other properties that may have been added by prior middleware calls. You can take a look at what is stored in this context below:
-
-```ts
-app.add((context: Context) => {
-  console.log(context.request, context.response);
-});
-```
+The context object is passed as the first parameter to a middleware function. It includes the HTTP request, the HTTP response, and any additional properties added by previous middleware calls.
 
 ### Calling the next middleware
 
-The next middleware function can be used to call the next middleware in the stack. If the middleware doesn't resolve the request and respond then the `next` function must be called. If the `next` function is not called then the system will hang. The following script will return "Ellie Sattler":
+The next middleware function is responsible for invoking the subsequent middleware in the stack. It must be called if the current middleware doesn't handle the request and provide a response; otherwise, the system will hang. As an example, the following script demonstrates how to calculate runtime across two middleware:
 
 ```ts
-app.add((_context: Context, next: CallableFunction) => {
-  next();
+app.add(async (_context: Context, next: CallableFunction) => {
+  const start = Date.now();
 
-  return {
-    name: 'Dr Ian Malcolm'
-  }
+  await next();
+
+  const ms = Date.now() - start;
+
+  console.log(`${ms}ms`);
 });
 
-app.add(() => ({
-  name: 'Dr Ellie Sattler'
-}));
+app.add(async () => {
+  await new Promise(resolve => setTimeout(resolve, 3000));
+
+  return 'Hello, Dr Malcolm!';
+});
+
+// console: ~3004ms
 ```
 
 ## Error handling
 
-Errors are caught and returned in the response object. If the JSON content-type is set within a middleware callback, all errors thrown in subsequent callbacks will respond with JSON, by design.
+> [!NOTE]
+> Further work to improve overall error handling will be coming soon.
+
+Just as response content types are automatically recognized, error responses are handled the same way. If you want errors to be returned in `text/plain`, you simply need to explicitly set the `Content-Type` as follows:
+
+```ts
+import { type Context, NotFound } from "jsr:@raptor/framework";
+
+app.add((context: Context) => {
+  context.response.headers.set('Content-Type', 'text/plain');
+
+  throw new NotFound();
+});
+```
+
+The following errors are currently available to import and throw from within the framework:
+
+* `NotFound`
+* `BadRequest`
+* `ServerError`
+* `TypeError`
 
 # Deployment
 
@@ -152,10 +175,9 @@ npx wrangler deploy
 
 # Available extensions
 
-Raptor is designed to be an unopinionated modular framework, allowing you to decide what batteries you wish to include or not. Here is a list of the first-party extensions available:
+Raptor is built as an unopinionated modular framework, giving you the flexibility to choose which components to include. Below is a list of available first-party extensions:
 
 * Router Middleware: [https://jsr.io/@raptor/router](https://jsr.io/@raptor/router)
-* Request Validation (soon...)
 
 # License
 
