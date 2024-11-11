@@ -38,6 +38,8 @@ Raptor is also available to import directly via JSR:
 Raptor's kernel will run through and process each middleware in the order they were added to the stack. However, if you wish to process the next middleware within another, you can use the built-in `next` argument which is provided to the callback (see "Calling the next middleware").
 
 ```ts
+// main.ts
+
 import { type Context, Kernel } from "jsr:@raptor/framework";
 
 const app = new Kernel();
@@ -45,6 +47,12 @@ const app = new Kernel();
 app.add(() => 'Hello, Dr Malcolm!');
 
 app.serve({ port: 8000 });
+```
+
+To run this code with Deno:
+
+```
+> deno run --allow-net main.ts
 ```
 
 ### Response
@@ -113,6 +121,9 @@ app.add(async () => {
 
 ## Error handling
 
+> [!NOTE]
+> Further work to improve overall error handling will be coming soon.
+
 Just as response content types are automatically recognized, error responses are handled the same way. If you want errors to be returned in `text/plain`, you simply need to explicitly set the `Content-Type` as follows:
 
 ```ts
@@ -131,9 +142,6 @@ The following errors are currently available to import and throw from within the
 * `BadRequest`
 * `ServerError`
 * `TypeError`
-
-> [!NOTE]
-> Further work to improve overall error handling will be coming soon.
 
 # Deployment
 
