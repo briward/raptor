@@ -84,7 +84,7 @@ Deno.test("test middleware catches 404 error", async () => {
     const { error } = ctx;
 
     if (error?.status === 404) {
-      return 'Page not found';
+      return "Page not found";
     }
   });
 
@@ -104,7 +104,7 @@ Deno.test("test middleware catches server error", async () => {
     const { error } = ctx;
 
     if (error?.status === 500) {
-      return 'Internal server error';
+      return "Internal server error";
     }
   });
 
@@ -118,8 +118,8 @@ Deno.test("test middleware catches bad request error", async () => {
 
   app.add((_ctx: Context) => {
     throw new BadRequest([
-      'There was an error in validation of field #1',
-      'There was an error in validation of field #2'
+      "There was an error in validation of field #1",
+      "There was an error in validation of field #2",
     ]);
   });
 
@@ -127,7 +127,7 @@ Deno.test("test middleware catches bad request error", async () => {
     const { error } = ctx;
 
     if (error?.status === 400) {
-      return 'Bad request';
+      return "Bad request";
     }
   });
 
