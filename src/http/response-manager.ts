@@ -11,7 +11,7 @@ export default class ResponseManager {
   /**
    * All available response processors.
    */
-  private processors : Processor[] = [];
+  private processors: Processor[] = [];
 
   /**
    * Initialise the HTTP processor.
@@ -21,9 +21,9 @@ export default class ResponseManager {
    */
   constructor(private context: Context) {
     this.processors = [
-      new PlainTextProcessor,
-      new HtmlProcessor,
-      new JsonProcessor,
+      new PlainTextProcessor(),
+      new HtmlProcessor(),
+      new JsonProcessor(),
     ];
   }
 

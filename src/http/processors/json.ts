@@ -4,23 +4,31 @@ import type Context from "../context.ts";
 import HttpResponse from "../response.ts";
 import type Processor from "../interfaces/processor.ts";
 
+/**
+ * The JSON object processor for HTTP responses.
+ */
 export default class JsonProcessor implements Processor {
+  /**
+   * Handle the response and process JSON objects if found.
+   *
+   * @param body Any HTTP response body.
+   * @param context The current HTTP context.
+   * @returns An HTTP response or null.
+   */
   public process(body: any, context: Context): HttpResponse | null {
     // Check if the response already has a content type set.
     const hasContentType = context.response.headers.get("content-type");
 
-    // If the middleware returns an object, process it as JSON.
-    if (typeof body === "object") {
-      if (!hasContentType) {
-        context.response.headers.set("content-type", "application/json");
-      }
+    // If the middleware doesn't return an object, don't process.
+    if (typeof body !== "object") return null;
 
-      return new HttpResponse(JSON.stringify(body), {
-        status: context.response.status,
-        headers: context.response.headers,
-      });
+    if (!hasContentType) {
+      context.response.headers.set("content-type", "application/json");
     }
 
-    return null;
+    return new HttpResponse(JSON.stringify(body), {
+      status: context.response.status,
+      headers: context.response.headers,
+    });
   }
 }
