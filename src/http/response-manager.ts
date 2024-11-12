@@ -48,7 +48,10 @@ export default class ResponseManager {
    * @param context The current HTTP context.
    * @returns A valid HTTP response object.
    */
-  public async process(body: any, context: Context): Promise<HttpResponse | null> {  
+  public async process(
+    body: any,
+    context: Context,
+  ): Promise<HttpResponse | null> {
     // Run through each processor and attempt to process response.
     for (let i = 0; i < this.processors.length; i++) {
       const response = await this.processors[i].process(body, context);

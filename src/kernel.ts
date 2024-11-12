@@ -85,7 +85,17 @@ export default class Kernel {
     await this.executeMiddleware(0, context);
   }
 
-  private async executeMiddleware(index: number, context: Context): Promise<void> {
+  /**
+   * Execute a chosen middleware by index.
+   *
+   * @param index The current middleware index.
+   * @param context The current HTTP context.
+   * @returns Promise<void>
+   */
+  private async executeMiddleware(
+    index: number,
+    context: Context,
+  ): Promise<void> {
     if (index >= this.middleware.length) return;
 
     const middleware = this.middleware[index];
@@ -110,20 +120,30 @@ export default class Kernel {
       await this.handleError(error as Error, context);
       await this.executeMiddleware(index + 1, context);
     }
-  };
+  }
 
+  /**
+   * Process an unknown response body with HTTP context.
+   *
+   * @param body An unknown response body to process.
+   * @param context The current HTTP context.
+   */
   private async processResponse(body: any, context: Context): Promise<void> {
     const processed = await this.responseManager.process(body, context);
 
     if (processed) {
       context.response = processed;
     }
-  };
+  }
 
+  /**
+   * Handle an HTTP error.
+   *
+   * @param error The caught error object.
+   * @param context The current HTTP context.
+   */
   private async handleError(error: Error, context: Context): Promise<void> {
     context.error = error;
     context.response.status = error.status || 500;
-
-    await this.processResponse(error, context);
-  };
+  }
 }

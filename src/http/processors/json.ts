@@ -29,6 +29,6 @@ export default class JsonProcessor implements Processor {
     return new HttpResponse(JSON.stringify(body), {
       status: context.response.status,
       headers: context.response.headers,
-    })
+    });
   }
 }

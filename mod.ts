@@ -12,4 +12,12 @@ import ResponseManager from "./src/http/response-manager.ts";
 export type { Error } from "./src/error/interfaces/error.ts";
 export type { Processor } from "./src/http/interfaces/processor.ts";
 
-export { BadRequest, HttpResponse, Context, Kernel, NotFound, ResponseManager, ServerError };
+export {
+  BadRequest,
+  Context,
+  HttpResponse,
+  Kernel,
+  NotFound,
+  ResponseManager,
+  ServerError,
+};

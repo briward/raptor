@@ -16,5 +16,8 @@ export interface Processor {
    * @param context The current HTTP context.
    * @returns An HTTP response or null.
    */
-  process(body: any, context: Context): Promise<ProcessResponse> | ProcessResponse;
+  process(
+    body: any,
+    context: Context,
+  ): Promise<ProcessResponse> | ProcessResponse;
 }
