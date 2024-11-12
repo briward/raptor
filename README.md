@@ -121,18 +121,31 @@ app.add(async () => {
 
 ## Error handling
 
-> [!NOTE]
-> Further work to improve overall error handling will be coming soon.
+Errors thrown in middleware are picked up and added to the `Context` object, allowing you to catch and handle them in a final middleware callback. As with standard middleware responses, content types and HTTP status codes are automatically assigned, but you can override them if needed.
 
-Just as response content types are automatically recognized, error responses are handled the same way. If you want errors to be returned in `text/plain`, you simply need to explicitly set the `Content-Type` as follows:
+> [!NOTE]
+> Just like regular response middleware, errors thrown must be handled and a valid response must be returned otherwise the system will hang.
 
 ```ts
 import { type Context, NotFound } from "jsr:@raptor/framework";
 
 app.add((context: Context) => {
-  context.response.headers.set('Content-Type', 'text/plain');
-
   throw new NotFound();
+});
+
+app.add((context: Context) => {
+  const { error, response } = context;
+
+  if (!error) {
+    return;
+  };
+
+  if (error.status === 404) {
+    return '<h1>No page could be found</h1>'
+  }
+
+  response.status = 500;
+  return '<h1>There was a server error</h1>'
 });
 ```
 

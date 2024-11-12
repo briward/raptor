@@ -1,5 +1,6 @@
 import Context from "./http/context.ts";
 import Processor from "./http/processor.ts";
+import HttpResponse from "./http/response.ts";
 
 import type { Error } from "./error/interfaces/error.ts";
 
@@ -30,7 +31,7 @@ export default class Kernel {
   constructor() {
     this.context = new Context(
       new Request("http://localhost"),
-      new Response(null),
+      new HttpResponse(null),
     );
 
     this.processor = new Processor(this.context);
@@ -62,20 +63,21 @@ export default class Kernel {
    * Handle an HTTP request and respond.
    *
    * @param request
-   * @returns
+   * @returns A promise resolving the HTTP response.
    */
   public async respond(request: Request): Promise<Response> {
     this.context.request = request;
 
-    try {
-      await this.next();
+    await this.next();
 
-      return this.context.response.clone();
-    } catch (error) {
-      return this.handleError(error as Error);
-    }
+    return this.context.response.clone();
   }
 
+  /**
+   * Handle the processing of middleware.
+   *
+   * @returns Promise<void>
+   */
   public async next(): Promise<void> {
     // Process an individual middleware by index.
     const execute = async (index: number) => {
@@ -84,31 +86,28 @@ export default class Kernel {
       if (index < this.middleware.length) {
         const middleware = this.middleware[index];
 
-        const body = await middleware(
-          this.context,
-          async () => {
-            called = true;
-            await execute(index + 1);
-          },
-        );
+        try {
+          const body = await middleware(
+            this.context,
+            async () => {
+              called = true;
+              await execute(index + 1);
+            },
+          );
 
-        if (!called) {
-          this.context.response = this.processor.process(body);
+          if (!called) {
+            this.context.response = this.processor.process(body);
+          }
+        } catch (error) {
+          this.context.response.status = (error as Error).status;
+          this.context.error = error as Error;
+
+          await execute(index + 1);
         }
       }
     };
 
     // Execute the first middle.
     await execute(0);
-  }
-
-  /**
-   * Handles an error and returns a response.
-   *
-   * @param error The error thrown by the application.
-   * @returns void
-   */
-  private handleError(error: Error): Response {
-    return this.processor.process(error, error.status);
   }
 }

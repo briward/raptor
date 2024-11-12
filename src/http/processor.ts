@@ -1,6 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 
 import type Context from "./context.ts";
+import HttpResponse from "./response.ts";
 
 export default class Processor {
   /**
@@ -18,12 +19,8 @@ export default class Processor {
    * @param status A valid HTTP status code.
    * @returns A valid HTTP response object.
    */
-  public process(body: any, status: number = 200): Response {
-    // If the middleware provides a Response object, use it.
-    if (body instanceof Response) {
-      return body;
-    }
-
+  public process(body: any): HttpResponse {
+    // Check if the response already has a content type set.
     const hasContentType = this.context.response.headers.get("content-type");
 
     // If the middleware returns an object, process it as JSON.
@@ -32,8 +29,8 @@ export default class Processor {
         this.context.response.headers.set("content-type", "application/json");
       }
 
-      return new Response(JSON.stringify(body), {
-        status,
+      return new HttpResponse(JSON.stringify(body), {
+        status: this.context.response.status,
         headers: this.context.response.headers,
       });
     }
@@ -50,14 +47,14 @@ export default class Processor {
         this.context.response.headers.set("content-type", "text/html");
       }
 
-      return new Response(body as string, {
-        status,
+      return new HttpResponse(body as string, {
+        status: this.context.response.status,
         headers: this.context.response.headers,
       });
     }
 
-    return new Response(body as string, {
-      status,
+    return new HttpResponse(body as string, {
+      status: this.context.response.status,
       headers: this.context.response.headers,
     });
   }
