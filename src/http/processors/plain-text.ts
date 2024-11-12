@@ -6,11 +6,18 @@ import type Processor from "../interfaces/processor.ts";
 
 export default class PlainTextProcessor implements Processor {
   public process(body: any, context: Context): HttpResponse | null {
+    // Check if the response already has a content type set.
+    const hasContentType = context.response.headers.get("content-type");
+
     // If the middleware returns a string, process plain text.
     if (typeof body === "string") {
       const isHtml = (new RegExp(/<[a-z/][\s\S]*>/i)).test(body);
 
-      if (!isHtml) {
+      if (isHtml) {
+        return null;
+      }
+
+      if (!isHtml && !hasContentType) {
         context.response.headers.set("content-type", "text/plain");
       }
 

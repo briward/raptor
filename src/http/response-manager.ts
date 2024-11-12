@@ -21,9 +21,9 @@ export default class ResponseManager {
    */
   constructor(private context: Context) {
     this.processors = [
-      new JsonProcessor,
       new PlainTextProcessor,
       new HtmlProcessor,
+      new JsonProcessor,
     ];
   }
 
@@ -36,10 +36,16 @@ export default class ResponseManager {
   public process(body: any): HttpResponse {
     let response = null;
 
+    // Run through each processor and attempt to process response.
     for (let i = 0; i < this.processors.length; i++) {
       response = this.processors[i].process(body, this.context);
+
+      if (response) {
+        return response;
+      }
     }
 
+    // No response could be processed, fallback.
     if (!response) {
       return new HttpResponse(body as string, {
         status: this.context.response.status,
