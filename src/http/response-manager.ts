@@ -1,11 +1,11 @@
 // deno-lint-ignore-file no-explicit-any
 
 import type Context from "./context.ts";
+import type HttpResponse from "./response.ts";
 import JsonProcessor from "./processors/json.ts";
 import HtmlProcessor from "./processors/html.ts";
 import type { Processor } from "./interfaces/processor.ts";
 import PlainTextProcessor from "./processors/plain-text.ts";
-import type { HttpResponse } from "../../mod.ts";
 
 /**
  * The response manager takes the response body and processes it

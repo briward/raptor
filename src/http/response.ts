@@ -9,6 +9,10 @@ export default class HttpResponse extends Response {
 
   #body: any;
 
+  override set bodyUsed(value: boolean) {
+    this.bodyUsed = false;
+  }
+
   /**
    * Get the HTTP status code.
    */

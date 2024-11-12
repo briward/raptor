@@ -1,3 +1,5 @@
+// deno-lint-ignore-file
+
 import Context from "./http/context.ts";
 import HttpResponse from "./http/response.ts";
 import type { Error } from "./error/interfaces/error.ts";
@@ -7,11 +9,6 @@ import ResponseManager from "./http/response-manager.ts";
  * The root initialiser for the framework.
  */
 export default class Kernel {
-  /**
-   * The current HTTP context.
-   */
-  private context: Context;
-
   /**
    * The response manager for the kernel.
    */
@@ -28,11 +25,6 @@ export default class Kernel {
    * @constructor
    */
   constructor() {
-    this.context = new Context(
-      new Request("http://localhost"),
-      new HttpResponse(null),
-    );
-
     this.responseManager = new ResponseManager();
   }
 
@@ -64,10 +56,13 @@ export default class Kernel {
    * @param request
    * @returns A promise resolving the HTTP response.
    */
-  public respond(request: Request): Promise<Response> {
-    this.context.request = request.clone();
+  public async respond(request: Request): Promise<Response> {
+    // Create a new context for this request
+    const context = new Context(request.clone(), new HttpResponse(null));
 
-    return this.next();
+    await this.next(context);
+
+    return context.response;
   }
 
   /**
@@ -83,50 +78,52 @@ export default class Kernel {
   /**
    * Handle the processing of middleware.
    *
-   * @returns Promise<Response>
+   * @param context The current HTTP context.
+   * @returns void
    */
-  private async next(): Promise<Response> {
-    let response = new Response(null);
+  private async next(context: Context): Promise<void> {
+    await this.executeMiddleware(0, context);
+  }
 
-    // Process an individual middleware by index.
-    const execute = async (index: number) => {
-      let called = false;
+  private async executeMiddleware(index: number, context: Context): Promise<void> {
+    if (index >= this.middleware.length) return;
 
-      if (index < this.middleware.length) {
-        const middleware = this.middleware[index];
+    const middleware = this.middleware[index];
 
-        try {
-          const next = async () => {
-            called = true;
-            await execute(index + 1);
-          };
+    let called = false;
 
-          // Call the middleware and provide context and next callback.
-          const body = await middleware(this.context, next);
+    const next = async () => {
+      if (called) return;
 
-          // If we should attempt processing.
-          if (!called && body) {
-            const processed = await this.responseManager.process(
-              body,
-              this.context,
-            );
+      called = true;
 
-            if (processed) {
-              response = processed;
-            };
-          }
-        } catch (error) {
-          this.context.error = (error as Error);
-          this.context.response.status = (error as Error).status;
-
-          await execute(index + 1);
-        }
-      }
+      await this.executeMiddleware(index + 1, context);
     };
 
-    // Execute the first middleware.
-    await execute(0);
+    try {
+      const body = await middleware(context, next);
 
-    return response;
-  }
+      if (!called && body) {
+        await this.processResponse(body, context);
+      }
+    } catch (error) {
+      await this.handleError(error as Error, context);
+      await this.executeMiddleware(index + 1, context);
+    }
+  };
+
+  private async processResponse(body: any, context: Context): Promise<void> {
+    const processed = await this.responseManager.process(body, context);
+
+    if (processed) {
+      context.response = processed;
+    }
+  };
+
+  private async handleError(error: Error, context: Context): Promise<void> {
+    context.error = error;
+    context.response.status = error.status || 500;
+
+    await this.processResponse(error, context);
+  };
 }
