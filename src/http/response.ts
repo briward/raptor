@@ -10,7 +10,7 @@ export default class HttpResponse extends Response {
   /**
    * Get the HTTP status code.
    */
-  override get status() {
+  override get status(): number {
     return this.#status;
   }
 
@@ -36,7 +36,7 @@ export default class HttpResponse extends Response {
    * @returns Whether the response has body content.
    */
   public hasBody(): boolean {
-    const length = this.headers.get('content-length');
+    const length = this.headers.get("content-length");
 
     if (!length) return false;
 

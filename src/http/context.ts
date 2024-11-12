@@ -8,17 +8,17 @@ export default class Context {
   /**
    * The current HTTP request.
    */
-  public request : Request;
+  public request: Request;
 
   /**
    * The current HTTP response.
    */
-  public response : HttpResponse;
+  public response: HttpResponse;
 
   /**
    * An error caught by the system.
    */
-  public error ?: Error;
+  public error?: Error;
 
   /**
    * Initialise an HTTP context.

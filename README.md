@@ -141,11 +141,11 @@ app.add((context: Context) => {
   };
 
   if (error.status === 404) {
-    return '<h1>No page could be found</h1>'
+    return '<h1>No page could be found</h1>';
   }
 
   response.status = 500;
-  return '<h1>There was a server error</h1>'
+  return '<h1>There was a server error</h1>';
 });
 ```
 
