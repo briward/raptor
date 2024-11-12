@@ -1,22 +1,21 @@
 import Context from "./http/context.ts";
-import Processor from "./http/processor.ts";
 import HttpResponse from "./http/response.ts";
-
 import type { Error } from "./error/interfaces/error.ts";
+import ResponseManager from "./http/response-manager.ts";
 
 /**
  * The root initialiser for the framework.
  */
 export default class Kernel {
   /**
-   * The response processor for the kernel.
-   */
-  private processor: Processor;
-
-  /**
    * The current HTTP context.
    */
   private context: Context;
+
+  /**
+   * The response manager for the kernel.
+   */
+  private responseManager: ResponseManager;
 
   /**
    * The available middleware.
@@ -34,7 +33,7 @@ export default class Kernel {
       new HttpResponse(null),
     );
 
-    this.processor = new Processor(this.context);
+    this.responseManager = new ResponseManager(this.context);
   }
 
   /**
@@ -87,6 +86,7 @@ export default class Kernel {
         const middleware = this.middleware[index];
 
         try {
+          // Call the middleware and provide context and next callback.
           const body = await middleware(
             this.context,
             async () => {
@@ -95,10 +95,12 @@ export default class Kernel {
             },
           );
 
+          // If we should attempt processing.
           if (!called) {
-            this.context.response = this.processor.process(body);
+            this.context.response = this.responseManager.process(body);
           }
         } catch (error) {
+          // We've hit an error, pass to next middleware for handling.
           this.context.response.status = (error as Error).status;
           this.context.error = error as Error;
 
@@ -107,7 +109,7 @@ export default class Kernel {
       }
     };
 
-    // Execute the first middle.
+    // Execute the first middleware.
     await execute(0);
   }
 }
