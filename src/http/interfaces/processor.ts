@@ -3,6 +3,18 @@
 import type Context from "../context.ts";
 import type HttpResponse from "../response.ts";
 
-export default interface Processor {
-  process(body: any, context: Context): HttpResponse | null;
+type ProcessResponse = HttpResponse | null;
+
+/**
+ * An HTTP response body processor.
+ */
+export interface Processor {
+  /**
+   * Handle the response body and process.
+   *
+   * @param body Any HTTP response body.
+   * @param context The current HTTP context.
+   * @returns An HTTP response or null.
+   */
+  process(body: any, context: Context): Promise<ProcessResponse> | ProcessResponse;
 }

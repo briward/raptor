@@ -2,7 +2,7 @@
 
 import type Context from "../context.ts";
 import HttpResponse from "../response.ts";
-import type Processor from "../interfaces/processor.ts";
+import type { Processor } from "../interfaces/processor.ts";
 
 /**
  * The JSON object processor for HTTP responses.
@@ -15,7 +15,7 @@ export default class JsonProcessor implements Processor {
    * @param context The current HTTP context.
    * @returns An HTTP response or null.
    */
-  public process(body: any, context: Context): HttpResponse | null {
+  public process(body: any, context: Context) {
     // Check if the response already has a content type set.
     const hasContentType = context.response.headers.get("content-type");
 
@@ -29,6 +29,6 @@ export default class JsonProcessor implements Processor {
     return new HttpResponse(JSON.stringify(body), {
       status: context.response.status,
       headers: context.response.headers,
-    });
+    })
   }
 }

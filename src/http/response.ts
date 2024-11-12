@@ -7,6 +7,8 @@ export default class HttpResponse extends Response {
    */
   #status: number = 200;
 
+  #body: any;
+
   /**
    * Get the HTTP status code.
    */
@@ -22,10 +24,19 @@ export default class HttpResponse extends Response {
   }
 
   /**
-   * Clone the current HTTP response.
-   *
-   * @returns A cloned HTTP response.
+   * Get the HTTP status code.
    */
+  override get body(): any {
+    return this.#body;
+  }
+
+  /**
+   * Set the HTTP status code.
+   */
+  override set body(body: any) {
+    this.#body = body;
+  }
+
   override clone(): HttpResponse {
     return this;
   }

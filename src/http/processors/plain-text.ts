@@ -2,7 +2,7 @@
 
 import type Context from "../context.ts";
 import HttpResponse from "../response.ts";
-import type Processor from "../interfaces/processor.ts";
+import type { Processor } from "../interfaces/processor.ts";
 
 /**
  * The plain text processor for HTTP responses.
@@ -15,7 +15,7 @@ export default class PlainTextProcessor implements Processor {
    * @param context The current HTTP context.
    * @returns An HTTP response or null.
    */
-  public process(body: any, context: Context): HttpResponse | null {
+  public process(body: any, context: Context) {
     // Check if the response already has a content type set.
     const hasContentType = context.response.headers.get("content-type");
 
@@ -25,15 +25,13 @@ export default class PlainTextProcessor implements Processor {
     // Check if the string contains HTML, ignore if it does.
     const isHtml = (new RegExp(/<[a-z/][\s\S]*>/i)).test(body);
 
-    if (isHtml) {
-      return null;
-    }
+    if (isHtml) return null;
 
     if (!isHtml && !hasContentType) {
       context.response.headers.set("content-type", "text/plain");
     }
 
-    return new HttpResponse(body as string, {
+    return new HttpResponse(body, {
       status: context.response.status,
       headers: context.response.headers,
     });

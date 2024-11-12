@@ -156,6 +156,43 @@ The following errors are currently available to import and throw from within the
 
 You can create your own errors by implementing the `Error` interface.
 
+## Response processors
+
+There are three response processors that come out of the box; PlainText, HTML and JSON. You can override or add your own processors by implementing the `Processor` interface and adding to the `ResponseManager`:
+
+```ts
+import { marked } from "npm:marked";
+
+import { type Context, Kernel } from "jsr:@raptor/framework";
+
+const app = new Kernel();
+
+class MarkdownProcessor implements Processor {
+  async process(body: any): Promise<HttpResponse | null> {
+    const html = await marked.parse(body);
+
+    return new HttpResponse(html, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/html'
+      }
+    });
+  }
+}
+
+const manager = new ResponseManager();
+
+manager.addProcessor(new MarkdownProcessor, 0);
+
+app.setResponseManager(manager);
+
+app.add(() => {
+  return '# Hello';
+});
+```
+
+The second parameter of the `addProcessor` method allows you to decide where in the stack you want your processor to run, as order is important in the processing of your response.
+
 # Deployment
 
 ## Deno Deploy

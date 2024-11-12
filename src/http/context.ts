@@ -29,4 +29,8 @@ export default class Context {
     this.request = request;
     this.response = response;
   }
+
+  public clone() {
+    return this;
+  }
 }

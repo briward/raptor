@@ -33,7 +33,7 @@ export default class Kernel {
       new HttpResponse(null),
     );
 
-    this.responseManager = new ResponseManager(this.context);
+    this.responseManager = new ResponseManager();
   }
 
   /**
@@ -64,20 +64,30 @@ export default class Kernel {
    * @param request
    * @returns A promise resolving the HTTP response.
    */
-  public async respond(request: Request): Promise<Response> {
-    this.context.request = request;
+  public respond(request: Request): Promise<Response> {
+    this.context.request = request.clone();
 
-    await this.next();
+    return this.next();
+  }
 
-    return this.context.response.clone();
+  /**
+   * Set or override the response manager for the kernel.
+   *
+   * @param manager A valid response manager object.
+   * @returns void
+   */
+  public setResponseManager(manager: ResponseManager): void {
+    this.responseManager = manager;
   }
 
   /**
    * Handle the processing of middleware.
    *
-   * @returns Promise<void>
+   * @returns Promise<Response>
    */
-  public async next(): Promise<void> {
+  private async next(): Promise<Response> {
+    let response = new Response(null);
+
     // Process an individual middleware by index.
     const execute = async (index: number) => {
       let called = false;
@@ -86,23 +96,28 @@ export default class Kernel {
         const middleware = this.middleware[index];
 
         try {
+          const next = async () => {
+            called = true;
+            await execute(index + 1);
+          };
+
           // Call the middleware and provide context and next callback.
-          const body = await middleware(
-            this.context,
-            async () => {
-              called = true;
-              await execute(index + 1);
-            },
-          );
+          const body = await middleware(this.context, next);
 
           // If we should attempt processing.
-          if (!called) {
-            this.context.response = this.responseManager.process(body);
+          if (!called && body) {
+            const processed = await this.responseManager.process(
+              body,
+              this.context,
+            );
+
+            if (processed) {
+              response = processed;
+            };
           }
         } catch (error) {
-          // We've hit an error, pass to next middleware for handling.
+          this.context.error = (error as Error);
           this.context.response.status = (error as Error).status;
-          this.context.error = error as Error;
 
           await execute(index + 1);
         }
@@ -111,5 +126,7 @@ export default class Kernel {
 
     // Execute the first middleware.
     await execute(0);
+
+    return response;
   }
 }
