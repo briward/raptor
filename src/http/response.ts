@@ -29,17 +29,4 @@ export default class HttpResponse extends Response {
   override clone(): HttpResponse {
     return this;
   }
-
-  /**
-   * Check if the response has body content.
-   *
-   * @returns Whether the response has body content.
-   */
-  public hasBody(): boolean {
-    const length = this.headers.get("content-length");
-
-    if (!length) return false;
-
-    return parseInt(length) > 0;
-  }
 }

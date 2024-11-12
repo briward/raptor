@@ -1,6 +1,10 @@
 import { assertEquals } from "jsr:@std/assert";
 
-import { type Context, Kernel } from "../mod.ts";
+import Kernel from "../src/kernel.ts";
+import NotFound from "../src/error/not-found.ts";
+import type Context from "../src/http/context.ts";
+import BadRequest from "../src/error/bad-request.ts";
+import ServerError from "../src/error/server-error.ts";
 
 const APP_URL = "http://localhost:8000";
 
@@ -67,4 +71,67 @@ Deno.test("test middleware next callback functionality", async () => {
   const response = await app.respond(new Request(APP_URL));
 
   assertEquals(await response.text(), "Hello from the second middleware");
+});
+
+Deno.test("test middleware catches 404 error", async () => {
+  const app = new Kernel();
+
+  app.add((_ctx: Context) => {
+    throw new NotFound();
+  });
+
+  app.add((ctx: Context) => {
+    const { error } = ctx;
+
+    if (error?.status === 404) {
+      return 'Page not found';
+    }
+  });
+
+  const response = await app.respond(new Request(APP_URL));
+
+  assertEquals(await response.text(), "Page not found");
+});
+
+Deno.test("test middleware catches server error", async () => {
+  const app = new Kernel();
+
+  app.add((_ctx: Context) => {
+    throw new ServerError();
+  });
+
+  app.add((ctx: Context) => {
+    const { error } = ctx;
+
+    if (error?.status === 500) {
+      return 'Internal server error';
+    }
+  });
+
+  const response = await app.respond(new Request(APP_URL));
+
+  assertEquals(await response.text(), "Internal server error");
+});
+
+Deno.test("test middleware catches bad request error", async () => {
+  const app = new Kernel();
+
+  app.add((_ctx: Context) => {
+    throw new BadRequest([
+      'There was an error in validation of field #1',
+      'There was an error in validation of field #2'
+    ]);
+  });
+
+  app.add((ctx: Context) => {
+    const { error } = ctx;
+
+    if (error?.status === 400) {
+      return 'Bad request';
+    }
+  });
+
+  const response = await app.respond(new Request(APP_URL));
+
+  assertEquals(await response.text(), "Bad request");
 });

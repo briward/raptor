@@ -129,23 +129,21 @@ Errors thrown in middleware are picked up and added to the `Context` object, all
 ```ts
 import { type Context, NotFound } from "jsr:@raptor/framework";
 
+// Simulate an application error.
 app.add((context: Context) => {
   throw new NotFound();
 });
 
+// Catch our error and handle response.
 app.add((context: Context) => {
   const { error, response } = context;
 
-  if (!error) {
-    return;
-  };
-
-  if (error.status === 404) {
-    return '<h1>No page could be found</h1>';
+  if (error?.status === 404) {
+    return '<h1>No page could be found</h1>'
   }
 
   response.status = 500;
-  return '<h1>There was a server error</h1>';
+  return '<h1>There was a server error</h1>'
 });
 ```
 
@@ -155,6 +153,8 @@ The following errors are currently available to import and throw from within the
 * `BadRequest`
 * `ServerError`
 * `TypeError`
+
+You can create your own errors by implementing the `Error` interface.
 
 # Deployment
 
