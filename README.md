@@ -121,10 +121,26 @@ app.add(async () => {
 
 ## Error handling
 
-Errors thrown in middleware are picked up and added to the `Context` object, allowing you to catch and handle them in a final middleware callback. As with standard middleware responses, content types and HTTP status codes are automatically assigned, but you can override them if needed.
+Errors thrown in middleware are picked up and added to the `Context` object, allowing you to catch and handle them in a final middleware callback. By default, the system automatically catches errors for you. If you wish to change this behaviour, you can adjust the settings in the Kernel options (see below). As with standard middleware responses, content types and HTTP status codes are automatically assigned, but you can override them if needed.
 
-> [!NOTE]
-> By default, the system automatically catches errors for you. If you wish to change this behaviour, you can adjust the settings in the optional Kernel options. For more information, refer to 'Disable automatic error catching'.
+The following errors are currently available to import and throw from within the framework:
+
+* `NotFound`
+* `BadRequest`
+* `ServerError`
+* `TypeError`
+
+You can create your own errors by implementing the `Error` interface.
+
+### Disable automatic error catching
+
+If you prefer to manage errors manually, you can disable the automatic error catching feature in the Kernel options. When you do this, it's essential to add a middleware callback (see example below) to check for errors and handle the responses accordingly.
+
+```ts
+const app = new Kernel({
+  catchErrors: false,
+})
+```
 
 ```ts
 import { type Context, NotFound } from "jsr:@raptor/framework";
@@ -139,31 +155,17 @@ app.add((context: Context) => {
   const { error, response } = context;
 
   if (error?.status === 404) {
-    return '<h1>No page could be found</h1>'
+    return {
+      message: 'No page could be found'
+    }
   }
 
   response.status = 500;
-  return '<h1>There was a server error</h1>'
+
+  return {
+    message: 'There was an internal server error'
+  }
 });
-```
-
-The following errors are currently available to import and throw from within the framework:
-
-* `NotFound`
-* `BadRequest`
-* `ServerError`
-* `TypeError`
-
-You can create your own errors by implementing the `Error` interface.
-
-### Disable automatic error catching
-
-If you prefer to manage errors manually, you can disable the automatic error catching feature in the Kernel options. When you do this, it's essential to add a middleware callback to check for errors and handle the responses accordingly.
-
-```ts
-const app = new Kernel({
-  catchErrors: false,
-})
 ```
 
 # Deployment
