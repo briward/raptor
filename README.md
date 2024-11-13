@@ -124,7 +124,7 @@ app.add(async () => {
 Errors thrown in middleware are picked up and added to the `Context` object, allowing you to catch and handle them in a final middleware callback. As with standard middleware responses, content types and HTTP status codes are automatically assigned, but you can override them if needed.
 
 > [!NOTE]
-> By default, the system automatically catches errors for you. If you wish to change this behaviour, you can adjust the settings in the optional Kernel options. For more information, refer to 'Disable Automatic Error Catching'.
+> By default, the system automatically catches errors for you. If you wish to change this behaviour, you can adjust the settings in the optional Kernel options. For more information, refer to 'Disable automatic error catching'.
 
 ```ts
 import { type Context, NotFound } from "jsr:@raptor/framework";
@@ -156,7 +156,7 @@ The following errors are currently available to import and throw from within the
 
 You can create your own errors by implementing the `Error` interface.
 
-### Disable automatic catching of errors
+### Disable automatic error catching
 
 If you prefer to manage errors manually, you can disable the automatic error catching feature in the Kernel options. When you do this, it's essential to add a middleware callback to check for errors and handle the responses accordingly.
 
