@@ -139,12 +139,13 @@ If you prefer to manage errors manually, you can disable the automatic error cat
 ```ts
 import { type Context, Kernel, NotFound } from "jsr:@raptor/framework";
 
+// Disable automatic error catching.
 const app = new Kernel({
   catchErrors: false,
 });
 
 // Simulate an application error.
-app.add((context: Context) => {
+app.add(() => {
   throw new NotFound();
 });
 
