@@ -137,13 +137,11 @@ You can create your own errors by implementing the `Error` interface.
 If you prefer to manage errors manually, you can disable the automatic error catching feature in the Kernel options. When you do this, it's essential to add a middleware callback (see example below) to check for errors and handle the responses accordingly.
 
 ```ts
+import { type Context, Kernel, NotFound } from "jsr:@raptor/framework";
+
 const app = new Kernel({
   catchErrors: false,
-})
-```
-
-```ts
-import { type Context, NotFound } from "jsr:@raptor/framework";
+});
 
 // Simulate an application error.
 app.add((context: Context) => {
@@ -166,6 +164,8 @@ app.add((context: Context) => {
     message: 'There was an internal server error'
   }
 });
+
+app.serve({ port: 8000 });
 ```
 
 # Deployment
