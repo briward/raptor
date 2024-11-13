@@ -2,6 +2,7 @@
 
 import Context from "./http/context.ts";
 import HttpResponse from "./http/response.ts";
+import { KernelOptions } from "./kernel-options.ts";
 import type { Error } from "./error/interfaces/error.ts";
 import ResponseManager from "./http/response-manager.ts";
 
@@ -9,6 +10,11 @@ import ResponseManager from "./http/response-manager.ts";
  * The root initialiser for the framework.
  */
 export default class Kernel {
+  /**
+   * Optional configuration options for the kernel.
+   */
+  private options?: KernelOptions;
+
   /**
    * The response manager for the kernel.
    */
@@ -24,7 +30,9 @@ export default class Kernel {
    *
    * @constructor
    */
-  constructor() {
+  constructor(options?: KernelOptions) {
+    this.options = this.initialiseDefaultOptions(options);
+
     this.responseManager = new ResponseManager();
   }
 
@@ -60,7 +68,17 @@ export default class Kernel {
     // Create a new context for this request
     const context = new Context(request.clone(), new HttpResponse(null));
 
+    // Add safety net for uncaught errors.
+    this.handleUncaughtError();
+
     await this.next(context);
+
+    // Add safety net for empty responses.
+    if (this.options?.catchEmptyResponses) {
+      if (!context.response.hasBody()) {
+        return new Response("No response body was found.");
+      }
+    }
 
     return context.response;
   }
@@ -73,6 +91,20 @@ export default class Kernel {
    */
   public setResponseManager(manager: ResponseManager): void {
     this.responseManager = manager;
+  }
+
+  /**
+   * Initialise the default kernel options.
+   *
+   * @param options Optional kernel options object.
+   * @returns A new kernel options object with defaults.
+   */
+  private initialiseDefaultOptions(options?: KernelOptions): KernelOptions {
+    return {
+      catchErrors: true,
+      catchEmptyResponses: true,
+      ...options,
+    };
   }
 
   /**
@@ -113,11 +145,11 @@ export default class Kernel {
     try {
       const body = await middleware(context, next);
 
-      if (!called && body) {
-        await this.processResponse(body, context);
-      }
+      if (called || !body) return;
+
+      await this.processMiddlewareResponse(body, context);
     } catch (error) {
-      await this.handleError(error as Error, context);
+      await this.handleMiddlewareError(error as Error, context);
       await this.executeMiddleware(index + 1, context);
     }
   }
@@ -128,12 +160,15 @@ export default class Kernel {
    * @param body An unknown response body to process.
    * @param context The current HTTP context.
    */
-  private async processResponse(body: any, context: Context): Promise<void> {
+  private async processMiddlewareResponse(
+    body: any,
+    context: Context,
+  ): Promise<void> {
     const processed = await this.responseManager.process(body, context);
 
-    if (processed) {
-      context.response = processed;
-    }
+    if (!processed) return;
+
+    context.response = processed;
   }
 
   /**
@@ -142,8 +177,26 @@ export default class Kernel {
    * @param error The caught error object.
    * @param context The current HTTP context.
    */
-  private async handleError(error: Error, context: Context): Promise<void> {
+  private async handleMiddlewareError(
+    error: Error,
+    context: Context,
+  ): Promise<void> {
     context.error = error;
     context.response.status = error.status || 500;
+  }
+
+  /**
+   * Handle unhandled errors with a saftey net middleware.
+   *
+   * @returns void
+   */
+  private handleUncaughtError(): void {
+    if (!this.options?.catchErrors) return;
+
+    this.add((context: Context) => {
+      if (!context.error) return;
+
+      return context.error.message;
+    });
   }
 }

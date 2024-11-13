@@ -20,4 +20,15 @@ export default class HttpResponse extends Response {
   override set status(status: number) {
     this.#status = status;
   }
+
+  /**
+   * Check if the response has a body.
+   *
+   * @returns Boolean
+   */
+  public hasBody(): boolean {
+    if (this.body) return true;
+
+    return false;
+  }
 }

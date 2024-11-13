@@ -97,7 +97,7 @@ The context object is passed as the first parameter to a middleware function. It
 
 ### Calling the next middleware
 
-The next middleware function is responsible for invoking the subsequent middleware in the stack. It must be called if the current middleware doesn't handle the request and provide a response; otherwise, the system will hang. As an example, the following script demonstrates how to calculate runtime across two middleware:
+The next middleware function is responsible for invoking the subsequent middleware in the stack. It must be called if the current middleware doesn't handle the request and provide a response; otherwise, the system will respond with an error. As an example, the following script demonstrates how to calculate runtime across two middleware:
 
 ```ts
 app.add(async (_context: Context, next: CallableFunction) => {
@@ -124,7 +124,7 @@ app.add(async () => {
 Errors thrown in middleware are picked up and added to the `Context` object, allowing you to catch and handle them in a final middleware callback. As with standard middleware responses, content types and HTTP status codes are automatically assigned, but you can override them if needed.
 
 > [!NOTE]
-> Just like regular response middleware, errors thrown must be handled and a valid response must be returned otherwise the system will hang.
+> By default, the system will automatically catch errors for you so you don't have to. You can change this using the optional kernel options. See "Disable automatic catching of errors".
 
 ```ts
 import { type Context, NotFound } from "jsr:@raptor/framework";
@@ -155,6 +155,16 @@ The following errors are currently available to import and throw from within the
 * `TypeError`
 
 You can create your own errors by implementing the `Error` interface.
+
+### Disable automatic catching of errors
+
+If you prefer to manage errors manually, you can disable the automatic error catching feature in the Kernel options. When you do this, it's essential to add a middleware callback to check for errors and handle the responses accordingly.
+
+```ts
+const app = new Kernel({
+  catchErrors: false,
+})
+```
 
 # Deployment
 
