@@ -65,23 +65,14 @@ export default class Kernel {
    */
   public async respond(request: Request): Promise<Response> {
     // Create a new context for this request
-    const context = new Context(request.clone(), new Response(null));
+    const context = new Context(request.clone(), new Response());
 
     // Add safety net for uncaught errors.
     this.handleUncaughtError();
 
     await this.next(context);
 
-    // If context.response is a Response, return directly
-    if (
-      context.response instanceof Response &&
-      context.response.body !== null
-    ) {
-      return context.response;
-    }
-
-    // Add safety net for empty responses.
-    return new Response("No response body was found.");
+    return context.response;
   }
 
   /**
@@ -165,8 +156,6 @@ export default class Kernel {
     context: Context,
   ): Promise<void> {
     const processed = await this.responseManager.process(body, context);
-
-    if (!processed) return;
 
     context.response = processed;
   }

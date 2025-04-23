@@ -50,16 +50,15 @@ export default class ResponseManager {
   public async process(
     body: any,
     context: Context,
-  ): Promise<Response | null> {
-    // Run through each processor and attempt to process response.
+  ): Promise<Response> {
     for (let i = 0; i < this.processors.length; i++) {
       const response = await this.processors[i].process(body, context);
 
-      if (!response) continue;
-
-      return response;
+      if (response instanceof Response) {
+        return response;
+      }
     }
 
-    return null;
+    throw new Error("No response body was found.");
   }
 }

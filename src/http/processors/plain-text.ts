@@ -14,7 +14,7 @@ export default class PlainTextProcessor implements Processor {
    * @param context The current HTTP context.
    * @returns An HTTP response or null.
    */
-  public process(body: any, context: Context) {
+  public process(body: any, context: Context): Response | null {
     // Check if the response already has a content type set.
     const hasContentType = context.response.headers.get("content-type");
 

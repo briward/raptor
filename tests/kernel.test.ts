@@ -188,33 +188,15 @@ Deno.test("test kernel does not automatically catch error", async () => {
     throw new NotFound();
   });
 
-  const response = await app.respond(new Request(APP_URL));
-
-  assertEquals(await response.text(), "No response body was found.");
-});
-
-Deno.test("test kernel automatically handles empty response body by default", async () => {
-  const app = new Kernel();
-
-  app.add((_ctx: Context) => {
-    //
+  app.add((ctx: Context) => {
+    if (ctx.error?.status === 404) {
+      return "Nothing was found";
+    }
   });
 
   const response = await app.respond(new Request(APP_URL));
 
-  assertEquals(await response.text(), "No response body was found.");
-});
-
-Deno.test("test kernel automatically handles empty response body", async () => {
-  const app = new Kernel();
-
-  app.add((_ctx: Context) => {
-    //
-  });
-
-  const response = await app.respond(new Request(APP_URL));
-
-  assertEquals(await response.text(), "No response body was found.");
+  assertEquals(await response.text(), "Nothing was found");
 });
 
 Deno.test("test new processor is added to kernel", async () => {
