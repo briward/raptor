@@ -1,7 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 
 import type Context from "../context.ts";
-import HttpResponse from "../response.ts";
 import type { Processor } from "../interfaces/processor.ts";
 
 /**
@@ -31,7 +30,7 @@ export default class PlainTextProcessor implements Processor {
       context.response.headers.set("content-type", "text/plain");
     }
 
-    return new HttpResponse(body, {
+    return new Response(body, {
       status: context.response.status,
       headers: context.response.headers,
     });

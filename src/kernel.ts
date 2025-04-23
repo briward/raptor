@@ -1,7 +1,6 @@
 // deno-lint-ignore-file
 
 import Context from "./http/context.ts";
-import HttpResponse from "./http/response.ts";
 import { KernelOptions } from "./kernel-options.ts";
 import type { Error } from "./error/interfaces/error.ts";
 import ResponseManager from "./http/response-manager.ts";
@@ -66,21 +65,20 @@ export default class Kernel {
    */
   public async respond(request: Request): Promise<Response> {
     // Create a new context for this request
-    const context = new Context(request.clone(), new HttpResponse(null));
+    const context = new Context(request.clone(), new Response(null));
 
     // Add safety net for uncaught errors.
     this.handleUncaughtError();
 
     await this.next(context);
 
-    // Add safety net for empty responses.
-    if (this.options?.catchEmptyResponses) {
-      if (!context.response.hasBody()) {
-        return new Response("No response body was found.");
-      }
+    // If context.response is a Response, return directly
+    if (context.response instanceof Response) {
+      return context.response;
     }
 
-    return context.response;
+    // Add safety net for empty responses.
+    return new Response("No response body was found.");
   }
 
   /**
@@ -102,7 +100,6 @@ export default class Kernel {
   private initialiseDefaultOptions(options?: KernelOptions): KernelOptions {
     return {
       catchErrors: true,
-      catchEmptyResponses: true,
       ...options,
     };
   }
@@ -182,7 +179,13 @@ export default class Kernel {
     context: Context,
   ): Promise<void> {
     context.error = error;
-    context.response.status = error.status || 500;
+
+    context.response = new Response(
+      context.response.body,
+      {
+        status: error.status || 500
+      }
+    );
   }
 
   /**

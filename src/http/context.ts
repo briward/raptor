@@ -1,4 +1,3 @@
-import type HttpResponse from "./response.ts";
 import type { Error } from "../error/interfaces/error.ts";
 
 /**
@@ -13,7 +12,7 @@ export default class Context {
   /**
    * The current HTTP response.
    */
-  public response: HttpResponse;
+  public response: Response;
 
   /**
    * An error caught by the system.
@@ -25,7 +24,7 @@ export default class Context {
    *
    * @constructor
    */
-  constructor(request: Request, response: HttpResponse) {
+  constructor(request: Request, response: Response) {
     this.request = request;
     this.response = response;
   }

@@ -1,7 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 
 import type Context from "./context.ts";
-import type HttpResponse from "./response.ts";
 import JsonProcessor from "./processors/json.ts";
 import HtmlProcessor from "./processors/html.ts";
 import type { Processor } from "./interfaces/processor.ts";
@@ -51,7 +50,7 @@ export default class ResponseManager {
   public async process(
     body: any,
     context: Context,
-  ): Promise<HttpResponse | null> {
+  ): Promise<Response | null> {
     // Run through each processor and attempt to process response.
     for (let i = 0; i < this.processors.length; i++) {
       const response = await this.processors[i].process(body, context);

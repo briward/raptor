@@ -1,9 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
 
 import type Context from "../context.ts";
-import type HttpResponse from "../response.ts";
 
-type ProcessResponse = HttpResponse | null;
+type ProcessResponse = Response | null;
 
 /**
  * An HTTP response body processor.
