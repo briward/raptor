@@ -8,7 +8,6 @@ import BadRequest from "../src/error/bad-request.ts";
 import ServerError from "../src/error/server-error.ts";
 import ResponseManager from "../src/http/response-manager.ts";
 import type { Processor } from "../src/http/interfaces/processor.ts";
-import { HttpResponse } from "../mod.ts";
 
 const APP_URL = "http://localhost:8000";
 
@@ -17,7 +16,6 @@ Deno.test("test kernel initialises default options", () => {
 
   assertEquals(app["options"], {
     catchErrors: true,
-    catchEmptyResponses: true,
   });
 });
 
@@ -208,9 +206,7 @@ Deno.test("test kernel automatically handles empty response body by default", as
 });
 
 Deno.test("test kernel automatically handles empty response body", async () => {
-  const app = new Kernel({
-    catchEmptyResponses: true,
-  });
+  const app = new Kernel();
 
   app.add((_ctx: Context) => {
     //
@@ -221,26 +217,12 @@ Deno.test("test kernel automatically handles empty response body", async () => {
   assertEquals(await response.text(), "No response body was found.");
 });
 
-Deno.test("test kernel does not automatically handle empty response body", async () => {
-  const app = new Kernel({
-    catchEmptyResponses: false,
-  });
-
-  app.add((_ctx: Context) => {
-    //
-  });
-
-  const response = await app.respond(new Request(APP_URL));
-
-  assertEquals(await response.text(), "");
-});
-
 Deno.test("test new processor is added to kernel", async () => {
   const app = new Kernel();
 
   class MyStringProcessor implements Processor {
-    process(body: any): Promise<HttpResponse | null> | (HttpResponse | null) {
-      return new HttpResponse(`MyStringProcessor: ${body}`);
+    process(body: any): Promise<Response | null> | (Response | null) {
+      return new Response(`MyStringProcessor: ${body}`);
     }
   }
 
