@@ -191,7 +191,7 @@ Deno.test("test kernel does not automatically catch error", async () => {
   app.add((ctx: Context) => {
     if (ctx.error?.status === 404) {
       return {
-        message: "Nothing was found"
+        message: "Nothing was found",
       };
     }
   });
