@@ -159,7 +159,10 @@ app.add((context: Context) => {
     }
   }
 
-  response.status = 500;
+  context.response = new Response(context.response.body, {
+    status: 500,
+    headers: context.response.headers,
+  });
 
   return {
     message: 'There was an internal server error'
