@@ -190,13 +190,17 @@ Deno.test("test kernel does not automatically catch error", async () => {
 
   app.add((ctx: Context) => {
     if (ctx.error?.status === 404) {
-      return "Nothing was found";
+      return {
+        message: "Nothing was found"
+      };
     }
   });
 
   const response = await app.respond(new Request(APP_URL));
 
-  assertEquals(await response.text(), "Nothing was found");
+  const data = await response.json();
+
+  assertEquals(data.message, "Nothing was found");
 });
 
 Deno.test("test new processor is added to kernel", async () => {
