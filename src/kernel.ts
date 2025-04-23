@@ -183,8 +183,8 @@ export default class Kernel {
     context.response = new Response(
       context.response.body,
       {
-        status: error.status || 500
-      }
+        status: error.status || 500,
+      },
     );
   }
 
