@@ -73,7 +73,10 @@ export default class Kernel {
     await this.next(context);
 
     // If context.response is a Response, return directly
-    if (context.response instanceof Response && context.response.body !== null) {
+    if (
+      context.response instanceof Response &&
+      context.response.body !== null
+    ) {
       return context.response;
     }
 
