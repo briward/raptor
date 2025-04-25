@@ -1,2 +1,6 @@
 # Ignore generated coverage files.
 coverage-report
+
+# Ignore example directories.
+example
+public

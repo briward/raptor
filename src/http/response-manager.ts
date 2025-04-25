@@ -5,6 +5,7 @@ import JsonProcessor from "./processors/json.ts";
 import HtmlProcessor from "./processors/html.ts";
 import type { Processor } from "./interfaces/processor.ts";
 import PlainTextProcessor from "./processors/plain-text.ts";
+import ResponseProcessor from "./processors/response.ts";
 
 /**
  * The response manager takes the response body and processes it
@@ -23,6 +24,7 @@ export default class ResponseManager {
    */
   constructor() {
     this.processors = [
+      new ResponseProcessor(),
       new PlainTextProcessor(),
       new HtmlProcessor(),
       new JsonProcessor(),

@@ -21,4 +21,6 @@ export interface Error {
    * Any optional error messages associated with the error.
    */
   errors?: string[];
+
+  stack?: string;
 }

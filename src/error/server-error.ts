@@ -1,19 +1,17 @@
 /**
- * An error used primarily in 500 internal server errors.
+ * An error used primarily in 500 server errors.
  */
-export default class ServerError implements Error {
-  /**
-   * The name of the error.
-   */
-  public name: string = "Server Error";
-
-  /**
-   * The end-user message attached to the error.
-   */
-  public message: string = "There was a server error handling the request";
-
+export default class ServerError extends Error implements Error {
   /**
    * The HTTP status code associated with the error.
    */
   public status: number = 500;
+
+  constructor(message?: string) {
+    super();
+
+    this.name = "Server Error";
+    this.message = message ??
+      "There was an unexpected error handling your request";
+  }
 }

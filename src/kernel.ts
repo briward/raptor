@@ -25,6 +25,11 @@ export default class Kernel {
   private middleware: CallableFunction[] = [];
 
   /**
+   * An optional custom error middleware function.
+   */
+  private errorMiddleware?: CallableFunction;
+
+  /**
    * Initialise the kernel.
    *
    * @constructor
@@ -67,9 +72,6 @@ export default class Kernel {
     // Create a new context for this request
     const context = new Context(request.clone(), new Response());
 
-    // Add safety net for uncaught errors.
-    this.handleUncaughtError();
-
     await this.next(context);
 
     return context.response;
@@ -83,6 +85,16 @@ export default class Kernel {
    */
   public setResponseManager(manager: ResponseManager): void {
     this.responseManager = manager;
+  }
+
+  /**
+   * Add custom error handling middleware.
+   *
+   * @param middleware A middleware function to handle errors.
+   * @returns void
+   */
+  public catch(middleware: CallableFunction): void {
+    this.errorMiddleware = middleware;
   }
 
   /**
@@ -105,20 +117,20 @@ export default class Kernel {
    * @returns void
    */
   private async next(context: Context): Promise<void> {
-    await this.executeMiddleware(0, context);
+    await this.executeMiddleware(context, 0);
   }
 
   /**
    * Execute a chosen middleware by index.
    *
-   * @param index The current middleware index.
    * @param context The current HTTP context.
+   * @param index The current middleware index.
    * @returns Promise<void>
    */
   private async executeMiddleware(
-    index: number,
     context: Context,
-  ): Promise<void> {
+    index: number,
+  ): Promise<Response | void> {
     if (index >= this.middleware.length) return;
 
     const middleware = this.middleware[index];
@@ -130,7 +142,9 @@ export default class Kernel {
 
       called = true;
 
-      await this.executeMiddleware(index + 1, context);
+      index++;
+
+      await this.executeMiddleware(context, index);
     };
 
     try {
@@ -140,8 +154,7 @@ export default class Kernel {
 
       await this.processMiddlewareResponse(body, context);
     } catch (error) {
-      await this.handleMiddlewareError(error as Error, context);
-      await this.executeMiddleware(index + 1, context);
+      await this.processUncaughtError(error as Error, context);
     }
   }
 
@@ -161,37 +174,43 @@ export default class Kernel {
   }
 
   /**
-   * Handle an HTTP error.
+   * Process an uncaught error with HTTP context.
    *
-   * @param error The caught error object.
-   * @param context The current HTTP context.
+   * @param error The uncaught error object to process.
+   * @param context The current HTTP context object.
+   * @returns Promise<void>
    */
-  private async handleMiddlewareError(
+  private async processUncaughtError(
     error: Error,
     context: Context,
   ): Promise<void> {
-    context.error = error;
+    if (this.options?.catchErrors || !this.errorMiddleware) {
+      await this.uncaughtErrorHandler(error as Error, context);
 
+      return;
+    }
+
+    const errorBody = await this.errorMiddleware(error as Error, context);
+
+    await this.processMiddlewareResponse(errorBody, context);
+  }
+
+  /**
+   * Handle the uncaught error internally.
+   *
+   * @param error The uncaught error object to handle.
+   * @param context The current HTTP context object.
+   * @returns Promise<void>
+   */
+  private async uncaughtErrorHandler(
+    error: Error,
+    context: Context,
+  ): Promise<void> {
     context.response = new Response(
-      context.response.body,
+      error.message,
       {
         status: error.status || 500,
       },
     );
-  }
-
-  /**
-   * Handle unhandled errors with a saftey net middleware.
-   *
-   * @returns void
-   */
-  private handleUncaughtError(): void {
-    if (!this.options?.catchErrors) return;
-
-    this.add((context: Context) => {
-      if (!context.error) return;
-
-      return context.error.message;
-    });
   }
 }
