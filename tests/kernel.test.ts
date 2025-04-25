@@ -69,8 +69,8 @@ Deno.test("test kernel updates middleware context", async () => {
 Deno.test("test middleware next callback functionality", async () => {
   const app = new Kernel();
 
-  app.add((_ctx: Context, next: CallableFunction) => {
-    next();
+  app.add(async (_ctx: Context, next: CallableFunction) => {
+    await next();
 
     return "Hello from the first middleware";
   });
@@ -91,17 +91,12 @@ Deno.test("test middleware catches 404 error", async () => {
     throw new NotFound();
   });
 
-  app.add((ctx: Context) => {
-    const { error } = ctx;
-
-    if (error?.status === 404) {
-      return "Page not found";
-    }
-  });
-
   const response = await app.respond(new Request(APP_URL));
 
-  assertEquals(await response.text(), "Page not found");
+  assertEquals(
+    await response.text(),
+    "The resource requested could not be found",
+  );
 });
 
 Deno.test("test middleware catches server error", async () => {
@@ -111,17 +106,12 @@ Deno.test("test middleware catches server error", async () => {
     throw new ServerError();
   });
 
-  app.add((ctx: Context) => {
-    const { error } = ctx;
-
-    if (error?.status === 500) {
-      return "Internal server error";
-    }
-  });
-
   const response = await app.respond(new Request(APP_URL));
 
-  assertEquals(await response.text(), "Internal server error");
+  assertEquals(
+    await response.text(),
+    "There was an unexpected error handling your request",
+  );
 });
 
 Deno.test("test middleware catches bad request error", async () => {
@@ -134,17 +124,12 @@ Deno.test("test middleware catches bad request error", async () => {
     ]);
   });
 
-  app.add((ctx: Context) => {
-    const { error } = ctx;
-
-    if (error?.status === 400) {
-      return "Bad request";
-    }
-  });
-
   const response = await app.respond(new Request(APP_URL));
 
-  assertEquals(await response.text(), "Bad request");
+  assertEquals(
+    await response.text(),
+    "There was an issue handling your request",
+  );
 });
 
 Deno.test("test kernel automatically catches error", async () => {
@@ -188,11 +173,24 @@ Deno.test("test kernel does not automatically catch error", async () => {
     throw new NotFound();
   });
 
+<<<<<<< Updated upstream
   app.add((ctx: Context) => {
     if (ctx.error?.status === 404) {
       return {
         message: "Nothing was found"
       };
+=======
+  app.catch((error: Error) => {
+    if (error instanceof NotFound) {
+      return new Response(
+        JSON.stringify({
+          message: "Nothing was found",
+        }),
+        {
+          status: 404,
+        },
+      );
+>>>>>>> Stashed changes
     }
   });
 

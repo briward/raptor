@@ -1,34 +1,19 @@
 /**
- * An error used primarily in validation request errors.
+ * An error used primarily in 400 bad request errors.
  */
-export default class BadRequest implements Error {
-  /**
-   * The name of the error.
-   */
-  public name: string = "Bad Request";
-
-  /**
-   * The end-user message attached to the error.
-   */
-  public message: string = "There was an issue handling your request";
-
+export default class BadRequest extends Error implements Error {
   /**
    * The HTTP status code associated with the error.
    */
   public status: number = 400;
 
-  /**
-   * Any error messages associated with the error.
-   */
   public errors: string[];
 
-  /**
-   * Initialise a bad request error.
-   *
-   * @constructor
-   * @param errors Any error messages associated with the error.
-   */
-  constructor(errors: string[]) {
+  constructor(errors: string[], message?: string) {
+    super();
+
+    this.name = "Bad Request";
+    this.message = message ?? "There was an issue handling your request";
     this.errors = errors;
   }
 }
