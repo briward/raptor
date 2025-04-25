@@ -22,5 +22,8 @@ export interface Error {
    */
   errors?: string[];
 
+  /**
+   * The stack string associated with the error.
+   */
   stack?: string;
 }
