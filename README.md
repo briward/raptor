@@ -77,6 +77,14 @@ When a string is returned, the `Content-Type` header is automatically set to `te
 app.add(() => '<h1>Hello, Dr Malcolm!</h1>');
 ```
 
+#### Returning Response directly
+
+Raptor makes it easy to return simple scalar values as responses, but when you need full control over the output, you can also return a custom Response object directly.
+
+```ts
+app.add(() => new Response("A custom body", { status: 200 }));
+```
+
 #### Overriding headers
 
 Although it's convenient to return data without configuring a `Content-Type`, there may be instances where you need to specify a particular header. In such cases, you can proceed as follows:
