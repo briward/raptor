@@ -173,13 +173,6 @@ Deno.test("test kernel does not automatically catch error", async () => {
     throw new NotFound();
   });
 
-<<<<<<< Updated upstream
-  app.add((ctx: Context) => {
-    if (ctx.error?.status === 404) {
-      return {
-        message: "Nothing was found"
-      };
-=======
   app.catch((error: Error) => {
     if (error instanceof NotFound) {
       return new Response(
@@ -190,7 +183,6 @@ Deno.test("test kernel does not automatically catch error", async () => {
           status: 404,
         },
       );
->>>>>>> Stashed changes
     }
   });
 
