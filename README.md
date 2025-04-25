@@ -150,23 +150,16 @@ app.add(() => {
 });
 
 // Catch our error and handle response.
-app.add((context: Context) => {
-  const { error, response } = context;
-
-  if (error?.status === 404) {
-    return {
-      message: 'No page could be found'
-    }
+app.catch((error: Error, _context: Context) => {
+  if (error instanceof NotFound) {
+    return new Response("This page could not be found", {
+      status: 404,
+    });
   }
 
-  context.response = new Response(context.response.body, {
-    status: 500,
-    headers: context.response.headers,
-  });
-
-  return {
-    message: 'There was an internal server error'
-  }
+  return new Response(error.stack ?? error.message, {
+    status: error.status ?? 500,
+  })
 });
 
 app.serve({ port: 8000 });
