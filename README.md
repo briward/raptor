@@ -3,9 +3,9 @@
 </p>
 
 <div id="user-content-toc">
-  <ul style="list-style: none; padding: 0; margin: 0;">
+  <ul style="list-style: none; padding: 0;">
     <summary>
-      <h1>Raptor Framework</h1>
+      <h1 style="margin: 0;">Raptor Framework</h1>
     </summary>
   </ul>
 </div>
