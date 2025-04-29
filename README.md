@@ -13,27 +13,27 @@
 
 Raptor is a lightweight middleware framework for Deno, focusing on readability and clear code. It balances functionality and simplicity, enabling you to express complex logic concisely.
 
-# Usage
+## Usage
 
 > [!NOTE]
 > This is currently under heavy development and is not yet suitable for production use. Please proceed with caution.
 
-## Installation
+### Installation
 
 To start using Raptor, simply install it through the CLI or import it directly from JSR.
 
-### Using the Deno CLI
+#### Using the Deno CLI
 
 ```
 deno add jsr:@raptor/framework
 ```
 
-### Importing with JSR
+#### Importing with JSR
 
 Raptor is also available to import directly via JSR:
 [https://jsr.io/@raptor/framework](https://jsr.io/@raptor/framework)
 
-## Middleware
+### Middleware
 
 Raptor's kernel will run through and process each middleware in the order they were added to the stack. However, if you wish to process the next middleware within another, you can use the built-in `next` argument which is provided to the callback (see "Calling the next middleware").
 
@@ -55,11 +55,11 @@ To run this code with Deno:
 deno run --allow-net main.ts
 ```
 
-### Response
+#### Response
 
 In Raptor, at least one middleware function is required to return a body response to ensure that the request cycle completes successfully. The `Content-Type` of your response will be automatically determined by the framework, allowing you to focus on your own application code.
 
-#### Returning JSON
+##### Returning JSON
 
 If the middleware response body is an object, it will be automatically recognized as `application/json`. Consequently, both the `Content-Type` header and the response body will be appropriately set to reflect this format.
 
@@ -69,7 +69,7 @@ app.add(() => ({
 }));
 ```
 
-#### Returning HTML
+##### Returning HTML
 
 When a string is returned, the `Content-Type` header is automatically set to `text/plain`. However, if the string is detected to contain HTML, the `Content-Type` header will be automatically adjusted to `text/html`.
 
@@ -77,7 +77,7 @@ When a string is returned, the `Content-Type` header is automatically set to `te
 app.add(() => '<h1>Hello, Dr Malcolm!</h1>');
 ```
 
-#### Returning Response directly
+##### Returning Response directly
 
 Raptor makes it easy to return simple scalar values as responses, but when you need full control over the output, you can also return a custom Response object directly.
 
@@ -85,7 +85,7 @@ Raptor makes it easy to return simple scalar values as responses, but when you n
 app.add(() => new Response("A custom body", { status: 200 }));
 ```
 
-#### Overriding headers
+##### Overriding headers
 
 Although it's convenient to return data without configuring a `Content-Type`, there may be instances where you need to specify a particular header. In such cases, you can proceed as follows:
 
@@ -99,11 +99,11 @@ app.add((context: Context) => {
 });
 ```
 
-### Context
+#### Context
 
 The context object is passed as the first parameter to a middleware function. It includes the HTTP request, the HTTP response, and any additional properties added by previous middleware calls.
 
-### Calling the next middleware
+#### Calling the next middleware
 
 The next middleware function is responsible for invoking the subsequent middleware in the stack. It must be called if the current middleware doesn't handle the request and provide a response; otherwise, the system will respond with an error. As an example, the following script demonstrates how to calculate runtime across two middleware:
 
@@ -127,7 +127,7 @@ app.add(async () => {
 // console: ~3004ms
 ```
 
-## Error handling
+### Error handling
 
 Errors thrown in middleware are picked up and added to the `Context` object, allowing you to catch and handle them in a final middleware callback. By default, the system automatically catches errors for you. If you wish to change this behaviour, you can adjust the settings in the Kernel options (see below). As with standard middleware responses, content types and HTTP status codes are automatically assigned, but you can override them if needed.
 
@@ -140,7 +140,7 @@ The following errors are currently available to import and throw from within the
 
 You can create your own errors by implementing the `Error` interface.
 
-### Disable automatic error catching
+#### Disable automatic error catching
 
 If you prefer to manage errors manually, you can disable the automatic error catching feature in the Kernel options. When you do this, it's essential to add a middleware callback (see example below) to check for errors and handle the responses accordingly.
 
@@ -173,9 +173,9 @@ app.catch((error: Error, _context: Context) => {
 app.serve({ port: 8000 });
 ```
 
-# Deployment
+## Deployment
 
-## Deno Deploy
+### Deno Deploy
 
 Raptor was built with Deno in mind, meaning that deploying to Deno Deploy is easy. Within your root directory (alongside your `main.ts` entry file) you can run:
 
@@ -183,7 +183,7 @@ Raptor was built with Deno in mind, meaning that deploying to Deno Deploy is eas
 deployctl deploy
 ```
 
-## Cloudflare Worker
+### Cloudflare Worker
 
 You can also deploy your application to a Cloudflare Worker by simply using the `respond` method of the Kernel. This allows you to bypass the usual `serve` method and return a Response directly.
 
@@ -203,13 +203,13 @@ Once you've setup your application for Cloudflare Workers, you can run the deplo
 npx wrangler deploy
 ```
 
-# Available extensions
+## Available extensions
 
 Raptor is built as an unopinionated modular framework, giving you the flexibility to choose which components to include. Below is a list of available first-party extensions:
 
 * Router Middleware: [https://jsr.io/@raptor/router](https://jsr.io/@raptor/router)
 
-# License
+## License
 
 _Copyright 2024, @briward. All rights reserved. The framework is licensed under
 the MIT license._
