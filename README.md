@@ -1,15 +1,15 @@
 <p align="center">
-  <img src="./assets//logo.png" width="300" />
+  <img align="right" src="./assets/logo.svg" width="150" height="150" alt="Raptor Framework" />
 </p>
 
-<p align="center">
+# Raptor Framework
+
+<p>
   <a href="https://github.com/briward/raptor/actions"><img src="https://github.com/briward/raptor/workflows/ci/badge.svg" alt="Build Status"></a>
-  <a href="jsr.io/@raptor/framework"><img src="https://jsr.io/badges/@raptor/framework?logoColor=3A9D95&color=3A9D95&labelColor=083344" /></a>
-  <a href="jsr.io/@raptor/framework score"><img src="https://jsr.io/badges/@raptor/framework/score?logoColor=3A9D95&color=3A9D95&labelColor=083344" /></a>
-  <a href="https://jsr.io/@raptor"><img src="https://jsr.io/badges/@raptor?logoColor=3A9D95&color=3A9D95&labelColor=083344" alt="" /></a>
+  <a href="jsr.io/@raptor/framework"><img src="https://jsr.io/badges/@raptor/framework" /></a>
+  <a href="jsr.io/@raptor/framework score"><img src="https://jsr.io/badges/@raptor/framework/score" /></a>
+  <a href="https://jsr.io/@raptor"><img src="https://jsr.io/badges/@raptor" alt="" /></a>
 </p>
-
-# Introduction
 
 Raptor is a lightweight middleware framework for Deno, focusing on readability and clear code. It balances functionality and simplicity, enabling you to express complex logic concisely.
 
@@ -52,7 +52,7 @@ app.serve({ port: 8000 });
 To run this code with Deno:
 
 ```
-> deno run --allow-net main.ts
+deno run --allow-net main.ts
 ```
 
 ### Response
