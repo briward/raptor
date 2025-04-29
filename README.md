@@ -9,7 +9,7 @@
   </p>
 </p>
 
-# Raptor Framework
+## Raptor Framework
 
 Raptor is a lightweight middleware framework for Deno, focusing on readability and clear code. It balances functionality and simplicity, enabling you to express complex logic concisely.
 
