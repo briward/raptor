@@ -1,21 +1,15 @@
 <p align="center">
-  <img align="right" src="./assets/logo.svg" width="150" height="150" alt="Raptor Framework" />
+  <img src="./assets/logo.svg" width="150" height="150" alt="Raptor Framework" />
+
+  <p align="center">
+    <a href="https://github.com/briward/raptor/actions"><img src="https://github.com/briward/raptor/workflows/ci/badge.svg" alt="Build Status"></a>
+    <a href="jsr.io/@raptor/framework"><img src="https://jsr.io/badges/@raptor/framework" /></a>
+    <a href="jsr.io/@raptor/framework score"><img src="https://jsr.io/badges/@raptor/framework/score" /></a>
+    <a href="https://jsr.io/@raptor"><img src="https://jsr.io/badges/@raptor" alt="" /></a>
+  </p>
 </p>
 
-<div id="user-content-toc">
-  <ul style="list-style: none; padding: 0;">
-    <summary>
-      <h1 style="margin: 0;">Raptor Framework</h1>
-    </summary>
-  </ul>
-</div>
-
-<p>
-  <a href="https://github.com/briward/raptor/actions"><img src="https://github.com/briward/raptor/workflows/ci/badge.svg" alt="Build Status"></a>
-  <a href="jsr.io/@raptor/framework"><img src="https://jsr.io/badges/@raptor/framework" /></a>
-  <a href="jsr.io/@raptor/framework score"><img src="https://jsr.io/badges/@raptor/framework/score" /></a>
-  <a href="https://jsr.io/@raptor"><img src="https://jsr.io/badges/@raptor" alt="" /></a>
-</p>
+# Raptor Framework
 
 Raptor is a lightweight middleware framework for Deno, focusing on readability and clear code. It balances functionality and simplicity, enabling you to express complex logic concisely.
 
