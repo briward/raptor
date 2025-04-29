@@ -2,7 +2,7 @@
   <img align="right" src="./assets/logo.svg" width="150" height="150" alt="Raptor Framework" />
 </p>
 
-# Raptor Framework
+### Raptor Framework
 
 <p>
   <a href="https://github.com/briward/raptor/actions"><img src="https://github.com/briward/raptor/workflows/ci/badge.svg" alt="Build Status"></a>
