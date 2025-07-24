@@ -54,18 +54,16 @@ export default class Kernel {
    *
    * @param options Server options.
    */
-  public serve(options: { port: number }) {
-    const { port } = options;
-
+  public serve(options: { port?: number }) {
     const handler = (request: Request) => this.respond(request);
 
-    if (!port) {
+    if (!options?.port) {
       Deno.serve(handler);
 
       return;
     }
 
-    Deno.serve({ port }, handler);
+    Deno.serve({ port: options.port }, handler);
   }
 
   /**
