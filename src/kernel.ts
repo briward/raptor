@@ -54,7 +54,7 @@ export default class Kernel {
    *
    * @param options Server options.
    */
-  public serve(options: { port?: number }) {
+  public serve(options?: { port?: number }) {
     const handler = (request: Request) => this.respond(request);
 
     if (!options?.port) {
